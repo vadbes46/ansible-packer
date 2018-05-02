@@ -1,14 +1,9 @@
 ---
-- name: create directory for ansible custom facts
-  file:
-    state: directory
-    recurse: yes
-    path: /etc/ansible/facts.d
-
-- name: install custom fact file
+- name: install ansible custom fact file
   copy:
     src: installed.fact
-    dest: /etc/ansible/facts.d
+    dest: /etc/ansible/facts.d/
+    directory_mode: 0755
     force: no
 
 - name: display all variables/facts known for a host
@@ -16,7 +11,131 @@
     var: "{{ hostvars[inventory_hostname] }}"
     verbosity: 3
 
-- name: display all variables/facts known for a host
-  debug:
-    msg: "{{ hostvars[inventory_hostname] }}"
-    verbosity: 3
+# - name: Add EPEL repository
+#   yum_repository:
+#     name: epel-repo
+#     description: EPEL YUM repo
+#     gpgkey: https://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+#     baseurl: https://download.fedoraproject.org/pub/epel/7/x86_64/
+
+# - name: update apt cache (yum check-update)
+#   yum:
+#     name: "*"
+#     state: latest
+#     update_cache: yes
+
+- name: ensure system packages are installed
+  yum:
+    update_cache: yes
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - automake
+    - autoconf
+    - curl
+    - wget
+    - htop
+    - mc
+    - zip
+    - unzip
+    - nano
+    - git
+    - epel-release
+    - openssl
+    - openssl-devel
+    - libsigc++20-devel
+    - nano
+    - sendmail
+    - tmux
+    - cmake
+    - vim
+    - traceroute
+    - python-pip
+    # - golang
+    # - locales
+    # - pkg-config
+    # - build-essential
+    # - python-software-properties
+    # - software-properties-common
+    # - python-mysqldb
+    # - python-psycopg2
+    # - redis-tools
+    # - lsb-core
+    # - apt-transport-https
+    # - nfs-common
+
+# - name: add nodejs official apt repository and key
+#   shell: "wget -qO- https://deb.nodesource.com/setup_8.x | bash - warn=no"
+
+# - name: update apt
+#   apt:
+#     update_cache: yes
+
+# - name: install nodejs
+#   apt:
+#     name: nodejs
+#     state: present
+
+# - name: install npm packages
+#   npm:
+#     name: "{{ item }}"
+#     global: yes
+#   with_items:
+#     - bower
+#     - less
+
+# - name: add yarn official apt repository
+#   apt_repository:
+#     repo: "deb https://dl.yarnpkg.com/debian/ stable main"
+#     state: present
+
+# - name: add yarn key
+#   apt_key:
+#     url: https://dl.yarnpkg.com/debian/pubkey.gpg
+#     state: present
+
+# - name: manually update apt-key
+#   apt:
+#     update_cache: yes
+
+# - name: install yarn
+#   apt:
+#     name: yarn
+#     state: present
+
+# - name: pam_limits
+#   pam_limits:
+#     domain: "{{ item.domain }}"
+#     limit_type: "-"
+#     limit_item: "{{ item.item }}"
+#     value: "{{ item.value }}"
+#   with_items:
+#     - { domain: 'root', item: 'nofile', value: '1048576' }
+#     - { domain: '*', item: 'nofile', value: '1048576' }
+#     - { domain: 'root', item: 'nproc', value: 'unlimited' }
+#     - { domain: '*', item: 'nproc', value: 'unlimited' }
+#     - { domain: 'root', item: 'stack', value: 'unlimited' }
+#     - { domain: '*', item: 'stack', value: 'unlimited' }
+
+# - name: pam_limits to common-session
+#   lineinfile:
+#     dest: /etc/pam.d/common-session
+#     regexp: 'session required pam_limits.so'
+#     line: 'session required pam_limits.so'
+
+# - name: add deployer_user to www-data
+#   user:
+#     name: "{{ deployer_username }}"
+#     append: yes
+#     groups: www-data
+
+- name: disabling selinux
+  selinux:
+    state: disabled
+
+# - name: locale gen
+#   locale_gen:
+#     name: en_US.UTF-8
+#     state: present
+
+

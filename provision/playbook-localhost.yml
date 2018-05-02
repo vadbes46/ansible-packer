@@ -1,0 +1,45 @@
+---
+# for Amazon
+- hosts: localhost
+  connection: local
+  become: yes
+  become_method: sudo
+  vars_files:
+    - ../.vagrantuser
+  roles:
+    - pre-task
+    # - app
+    # - plus
+    # - nginx
+  tags:
+    - localhost_cloud
+
+# for Jenkins QA node
+- hosts: localhost
+  connection: local
+  become: yes
+  become_method: sudo
+  vars_files:
+    - ../.vagrantuser
+  roles:
+    - pre-task
+    # - app
+    # - plus
+    # - nginx
+  tags:
+    - localhost_dev
+
+# for Jenkins DEV node
+- hosts: localhost
+  connection: local
+  become: yes
+  become_method: sudo
+  vars_files:
+    - ../.vagrantuser
+  roles:
+    - pre-task
+    # - app
+    # - plus
+    # - nginx
+  tags:
+    - localhost_qa

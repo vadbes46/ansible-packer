@@ -1,0 +1,30 @@
+server {
+    charset utf-8;
+    client_max_body_size 128M;
+
+    listen 80;
+
+    server_name {{ host_prefix }}{{ host_xhprof }}{{ host_postfix }}{{ vagrant_postfix }};
+    root        /usr/share/php/xhprof_html;
+    index       index.php;
+
+
+    location ~ \.(html|jpg|jpeg|gif|swf|ico|png|xml|zip|js|css|txt|htc|ttf|woff|eot)$ {
+        access_log off;
+        log_not_found off;
+        expires -1;
+        root /usr/share/php/xhprof_html;
+        try_files $uri =404;
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+        fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+        try_files $uri =404;
+    }
+
+    location ~ /\.(ht|svn|git) {
+        deny all;
+    }
+}

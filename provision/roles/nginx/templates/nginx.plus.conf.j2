@@ -1,0 +1,25 @@
+server {
+  server_name {{ host.host_plus }};
+  root {{ path.root_dir }}/plus/public_html;
+
+  location = /favicon.ico {
+    return 204;
+    access_log off;
+    log_not_found off;
+  }
+
+  location / {
+    try_files $uri /index.php$is_args$args;
+  }
+
+  location ~ ^/index\.php(/|$) {
+    fastcgi_pass   127.0.0.1:9000;
+    fastcgi_split_path_info ^(.+\.php)(/.*)$;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_param HTTPS off;
+  }
+
+  error_log {{ path.root_dir }}/logs/nginx_plus_error.log;
+  access_log {{ path.root_dir }}/logs/nginx_plus_access.log;
+}

@@ -1,0 +1,12 @@
+---
+- name: restart tarantool
+  become: yes
+  become_method: sudo
+  service:
+    name: tarantool
+    state: restarted
+
+- name: start plus.lua
+  become: yes
+  become_method: sudo
+  shell: tarantoolctl start plus.lua

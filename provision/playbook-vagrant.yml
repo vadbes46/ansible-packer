@@ -1,0 +1,30 @@
+---
+# for Vagrant `dev`
+- hosts: dev
+  connection: local
+  become: yes
+  become_method: sudo
+  vars_files:
+    - ../.vagrantuser
+  roles:
+    - pre-task
+    # - app
+    # - plus
+    # - nginx
+  tags:
+    - vagrant_dev
+
+# for Vagrant `office`
+- hosts: office
+  connection: local
+  become: yes
+  become_method: sudo
+  vars_files:
+    - ../.vagrantuser
+  roles:
+    - pre-task
+    # - app
+    # - plus
+    # - nginx
+  tags:
+    - vagrant_office

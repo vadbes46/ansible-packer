@@ -1,0 +1,27 @@
+server {
+    listen 80;
+    server_name mock01.qa.ams;
+
+    location / {
+        proxy_pass http://{{ host_prefix }}{{ host_mock }}{{ host_postfix }}{{ vagrant_postfix }};
+    }
+}
+
+server {
+    listen 40006;
+    server_name mock01.qa.ams;
+
+    location / {
+        proxy_pass http://{{ host_prefix }}{{ host_mock }}{{ host_postfix }}{{ vagrant_postfix }};
+    }
+}
+
+server {
+    listen 40007;
+    server_name mock01.qa.ams;
+
+    location / {
+        proxy_pass http://{{ host_prefix }}{{ host_mock }}{{ host_postfix }}{{ vagrant_postfix }};
+    }
+}
+

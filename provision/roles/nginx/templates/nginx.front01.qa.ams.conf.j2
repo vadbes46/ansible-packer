@@ -1,0 +1,17 @@
+server {
+    listen 80;
+    server_name front01.qa.ams;
+
+    location / {
+        proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }};
+    }
+}
+
+server {
+    listen 8080;
+    server_name front01.qa.ams;
+
+    location / {
+        proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }};
+    }
+}

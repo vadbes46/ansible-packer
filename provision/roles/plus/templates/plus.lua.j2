@@ -1,0 +1,141 @@
+box.cfg {
+    listen = '127.0.0.1:3301',
+--  wal_dir   = "/var/lib/tarantool",
+    username  = "root",
+    pid_file = "/var/run/tarantool.pid",
+    background = true,
+    log_level = 5,
+    log_nonblock = true,
+    too_long_threshold = 1,
+    log = '/var/log/tarantool/plus.log',
+    read_only = false
+}
+
+box.schema.user.create('guest', {if_not_exists = true})
+box.schema.user.grant('guest', 'read,write,execute,replication', 'universe', nil, {if_not_exists = true})
+
+--box.once("schema", function()
+--    box.schema.user.grant('guest', 'read,write,execute,replication', 'universe')
+--end)
+
+local PersistentCache = {}
+PersistentCache.__index = PersistentCache;
+
+setmetatable(PersistentCache, {
+    __call = function (cls, ...)
+        return cls.new(...)
+    end,
+})
+
+function PersistentCache.new()
+    box.schema.space.create(
+        'persistent_cache',
+        {
+            id = 1,
+            temporary = false,
+            if_not_exists = true,
+            engine = 'vinyl',
+            format = {
+                { name = 'id', type = 'string' },
+                { name = 'data', type = 'string' },
+                { name = 'expiration', type = 'unsigned' }
+            }
+        }
+    )
+
+    box.space.persistent_cache:create_index('primary_key', {unique=true, type='TREE', parts = {1, 'string'}, if_not_exists=true})
+
+    return setmetatable({
+        space = box.space.persistent_cache,
+        clock = require('clock'),
+--      expirationd = require('expirationd')
+    }, PersistentCache);
+end;
+
+function PersistentCache:startExpirationDaemon()
+    local function isExpired(args, tuple)
+        return self.clock.time() >= tuple[3]
+    end;
+
+    local function deleteTuple(space_id, args, tuple)
+        self.space:delete { tuple[1] }
+    end;
+
+    self.expirationd.start(
+        'clean_all',
+        box.space.persistent_cache.id,
+        isExpired,
+        {
+            process_expired_tuple = deleteTuple,
+            args = nil,
+            tuples_per_iteration = 50,
+            full_scan_time = 3600
+        }
+    )
+end;
+
+function PersistentCache:stopExpirationDaemon()
+    self.expirationd.task('clean_all'):stop()
+end
+
+queue = require('queue')
+--local os = require('os')
+plus_cache = PersistentCache();
+--plus_cache:startExpirationDaemon();
+
+queue.create_tube(
+    'events',
+    'fifottl',
+    {
+        temporary = false,
+        if_not_exists=true
+    }
+)
+
+queue.create_tube(
+    'unserialized_events',
+    'fifottl',
+    {
+        temporary = false,
+        if_not_exists=true
+    }
+)
+
+queue.create_tube(
+    'bad_events',
+    'fifottl',
+    {
+        temporary = false,
+        if_not_exists=true
+    }
+)
+
+log = require('log')
+
+function on_connect_impl()
+    log.info("connected "..box.session.peer()..", sid "..box.session.id())
+end
+
+function on_disconnect_impl()
+    log.info("disconnected, sid "..box.session.id())
+end
+
+function on_auth_impl(user)
+    log.info("authenticated sid "..box.session.id().." as "..user)
+end
+
+function on_connect() pcall(on_connect_impl) end
+function on_disconnect() pcall(on_disconnect_impl) end
+function on_auth(user) pcall(on_auth_impl, user) end
+
+box.session.on_connect(on_connect)
+box.session.on_disconnect(on_disconnect)
+box.session.on_auth(on_auth)
+
+function ack(taskId)
+    local task = queue.tube.events:ack(taskId)
+
+    log.info("---------------ack " ..taskId)
+
+    return task
+end

@@ -1,0 +1,20 @@
+---
+- name: configure plus app
+  template:
+    src: app.plus.dev.base.php.j2
+    dest: "{{ path.root_dir }}/plus/config/dev/base.php"
+    owner: "{{ deployer_username }}"
+    group: "{{ deployer_username }}"
+
+- name: make ramdisk folder
+  file:
+    path: "{{ plus.plus_ram_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0777
+
+- name: make ramdisk permanently on startup
+  lineinfile:
+    path: "/etc/fstab"
+    line: "tmpfs {{ plus.plus_ram_path }} tmpfs noatime,nodiratime,nodev,nosuid,uid=1000,gid=100,mode=0777,size=512M 0 0"

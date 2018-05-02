@@ -1,0 +1,36 @@
+# ------------------------------------------------------------------------------------------------------------------------------------
+# ADJUST THESE SETTINGS
+# ------------------------------------------------------------------------------------------------------------------------------------
+env:
+  username: vagrant                     # who is provisioning
+  ip: "192.168.15.15"                   # private network ip
+  memory: 4096                          # 6144 or 8096 for async plus
+  cpus: 4                               # Use `2` for i5 and `4` for i7
+  in_office: false                      # whether to register in office network
+  host_prefix: ""                       # "amazon1." or "vbesedin."
+  host_postfix: ".test"                 # "-cex.ecpdss.net", "-gate2025.ecpdss.net", "-demogate.ecpdss.net" or ".test"
+
+plus:
+  plus_logger_type: stream              # plus logger type; stream - writing to file, graylog - sending to server 
+  plus_graylog_system_name: dev         # switch type graylog and system_name, e.g. vbesedin-plus
+  plus_workers_autostart: false         # configure plus workers to autostart in supervisor
+  plus_ram_path: "/www/plus/ram"        # path on the guest of plus ram folder
+
+# ------------------------------------------------------------------------------------------------------------------------------------
+# ADDITIONAL PARAMS
+# ------------------------------------------------------------------------------------------------------------------------------------
+path:                                   # relative local paths to repos (in case all repos are in one folder)
+  root_dir:  "/data"
+  logs:      "../logs"
+  plus:      "../plus"                  # https://stash.paymantix.com/projects/PHP/repos/plus/browse
+
+id_rsa:                                 # these keys must be authorized for work with ecommpay stash repos (no passphrase)
+  deployer_id_rsa: "~/.ssh/id_rsa"
+  deployer_id_rsa_pub: "~/.ssh/id_rsa.pub"
+
+host:                                   # virtual hosts inside VM
+  host_plus: "plus.plus"
+  host_gate: "gate.test"
+  host_mock: "mock01.ecpdss.net"
+  host_keydaemon: "gate.test:12080"
+  host_memcached: "gate.test"

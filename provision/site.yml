@@ -1,0 +1,3 @@
+---
+- import_playbook: playbook-vagrant.yml
+- import_playbook: playbook-localhost.yml

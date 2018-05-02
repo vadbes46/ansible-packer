@@ -1,0 +1,115 @@
+---
+- name: Clean up yum cache
+  shell: "yum clean all"
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+
+- name: Install EPEL
+  shell: "yum -y install epel-release"
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+
+#- name: Enable EPEL repository
+#  shell: "{{ item }}"
+#  with_items:
+#    - "yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
+#    - "sed 's/enabled=.*/enabled=1/g' -i /etc/yum.repos.d/epel.repo"
+#  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+#  ignore_errors: true
+
+- name: Add Tarantool repository
+  shell: "rm -f /etc/yum.repos.d/*tarantool*.repo"
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+- copy:
+    src: "{{ item }}"
+    dest: /etc/yum.repos.d/
+    force: no
+  with_items:
+    - tarantool_1_7.repo
+#    - tarantool_1_9.repo
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+
+- name: Update metadata
+  shell: "yum makecache -y --disablerepo='*' --enablerepo='{{ item }}' --enablerepo='epel'"
+  with_items:
+    - tarantool_1_7
+#    - tarantool_1_9
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+
+- name: Install Tarantool
+  shell: "{{ item }}"
+  with_items:
+    - "yum -y install tarantool"
+    - "yum -y install tarantool-queue"
+    - "yum -y install tarantool-expirationd"
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+
+- name: add tarantool key
+  apt_key:
+    url: "{{ item }}"
+    state: present
+  with_items:
+    - http://download.tarantool.org/tarantool/1.7/gpgkey
+#    - http://download.tarantool.org/tarantool/1.9/gpgkey
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+- name: add tarantool official apt repository
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - "deb http://download.tarantool.org/tarantool/1.7/ubuntu/ xenial main"
+    - "deb-src http://download.tarantool.org/tarantool/1.7/ubuntu/ xenial main"
+#    - "deb http://download.tarantool.org/tarantool/1.9/ubuntu/ xenial main"
+#    - "deb-src http://download.tarantool.org/tarantool/1.9/ubuntu/ xenial main"
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+- name: install tarantool
+  apt:
+    name: "{{ item }}"
+    state: present
+    force: yes
+  with_items:
+    - apt-transport-https
+#    - tarantool
+    - tarantool=1.7.6.20.g2527cd4-1
+    - tarantool-queue
+    - tarantool-expirationd
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+- name: stop instance tarantool@example
+  shell: "tarantoolctl stop example.lua &>/dev/null"
+  ignore_errors: true
+#  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+- name: disable instance tarantool@example
+  file:
+    path: "/etc/tarantool/instances.enabled/example.lua"
+    state: absent
+  notify:
+    - restart tarantool
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+- name: set instance tarantool@plus
+  template:
+    src: "{{ item }}.lua.j2"
+    dest: "/etc/tarantool/instances.available/{{ item }}.lua"
+  with_items:
+   - plus
+  notify:
+    - start plus.lua
+    - restart tarantool
+  changed_when: true
+#  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+- name: enable instance tarantool@plus
+  file:
+    src: "/etc/tarantool/instances.available/{{ item }}.lua"
+    dest: "/etc/tarantool/instances.enabled/{{ item }}.lua"
+    state: link
+  with_items:
+   - plus
+  notify:
+    - start plus.lua
+    - restart tarantool
+  changed_when: true
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'

@@ -1,0 +1,5 @@
+[vagrant-dev-group]
+dev ansible_host={{env.ip}} ansible_user={{env.username}}
+
+[vagrant-office-group]
+office ansible_host={{env.ip}} ansible_user={{env.username}}

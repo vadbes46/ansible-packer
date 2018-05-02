@@ -1,0 +1,76 @@
+<?php
+
+use Plus\PaymentSystem\ProcessingFactory\ProcessingMap;
+use Plus\PaymentSystem\Interfaces\GateSettings;
+
+$base = require_once __DIR__ . '/../base.php';
+
+$config = [
+    'key_daemon' => [
+        'base_uri' => '{{ host.host_keydaemon }}',
+        'method' => 'POST',
+        'attempts' => 5,
+        'reattempt_timeout' => 50000,
+    ],
+    'config' => [
+        'logger' => [
+            'name' => 'plus',
+            'type' => '{{ plus.plus_logger_type }}',
+            \Plus\Logger::HANDLER_TYPE_STREAM => [
+                'file' => '{{ path.root_dir }}/logs/plus.log',
+                'level' => \Monolog\Logger::DEBUG,
+            ],
+            \Plus\Logger::HANDLER_TYPE_GRAYLOG => [
+                'port' => \Gelf\Transport\UdpTransport::DEFAULT_PORT,
+                'host' => 'graylog.dev.office',
+                'systemName' => '{{ plus.plus_graylog_system_name }}'
+            ],
+            \Plus\Logger::HANDLER_TYPE_SCRIBE_FILE => [
+                'file' => __DIR__ . '/../../logs/plus.log',
+                'level' => \Monolog\Logger::DEBUG,
+            ],             
+            'log_exception_trace' => true,
+        ],
+        'processing' => [
+            ProcessingMap::ROUND_BANK => [
+                'verify_cert' => false
+            ],
+        ],
+        'plusUrl' => 'http://{{ host.host_plus }}',
+        'plusPrivateUrl' => 'http://{{ host.host_plus }}',
+        'gates' => [
+            'eco_dev' => [
+                GateSettings::CALLBACK_URL => 'http://{{ host.host_gate }}/v2/payment/plus/callback',
+                GateSettings::RETURN_URL => 'http://{{ host.host_plus }}/test/gateIn',
+            ],
+        ],
+        //'cert_dir' => __DIR__ . '/../certs',
+        'ram_dir' => '{{ plus.plus_ram_path }}',
+        'tracer' => [
+            //Switch on or off
+            'enabled' => true,
+            'mode' => 0,
+            //Print debug info to log file "/data/logs/tracer-cpp.log"
+            'debug_output' => false,
+            //reporter type
+            'reporter' => [
+                //udp or file, we need udp
+                'type' => 'udp',
+                'options' => [
+                    'addr' => 'localhost',
+                    'port' => 6831,
+                ],
+            ],
+            //Tracers output modifiers
+            'sampler' => [
+                'type' => 'percentage',
+                'options' => [
+                    //Percentage of tracers which will be sent, for prod must be 100
+                    'percents' => 100
+                ]
+            ]
+        ],
+    ],
+];
+
+return array_replace_recursive($base, $config);

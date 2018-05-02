@@ -1,0 +1,30 @@
+server {
+    server_name {{ host_prefix }}{{ host_admin }}{{ host_postfix }}{{ vagrant_postfix }};
+
+    root {{ root_dir }}/admin/web;
+
+    location / {
+        try_files $uri /app_dev.php$is_args$args;
+    }
+
+    location ~ ^/(app_dev|config)\.php(/|$) {
+        fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+        fastcgi_buffers 256 256k;
+        fastcgi_buffer_size 512k;
+        fastcgi_connect_timeout 300;
+        fastcgi_send_timeout 300;
+        fastcgi_read_timeout 300;
+    }
+
+   location ~ \.php$ {
+     return 404;
+   }
+
+   error_log {{ root_dir }}/logs/nginx_admin_nt_error.log;
+   access_log {{ root_dir }}/logs/nginx_admin_nt_access.log;
+}

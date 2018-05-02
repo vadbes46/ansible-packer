@@ -1,0 +1,22 @@
+---
+- name: create directory for ansible custom facts
+  file:
+    state: directory
+    recurse: yes
+    path: /etc/ansible/facts.d
+
+- name: install custom fact file
+  copy:
+    src: installed.fact
+    dest: /etc/ansible/facts.d
+    force: no
+
+- name: display all variables/facts known for a host
+  debug:
+    var: "{{ hostvars[inventory_hostname] }}"
+    verbosity: 3
+
+- name: display all variables/facts known for a host
+  debug:
+    msg: "{{ hostvars[inventory_hostname] }}"
+    verbosity: 3

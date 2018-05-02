@@ -1,0 +1,8 @@
+server {
+    listen 80;
+    server_name mock.dev;
+
+    location / {
+        proxy_pass http://{{ host_prefix }}{{ host_mock }}{{ host_postfix }}{{ vagrant_postfix }};
+    }
+}

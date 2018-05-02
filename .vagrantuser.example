@@ -9,6 +9,7 @@ env:
   in_office: false                      # whether to register in office network
   host_prefix: ""                       # "amazon1." or "vbesedin."
   host_postfix: ".test"                 # "-cex.ecpdss.net", "-gate2025.ecpdss.net", "-demogate.ecpdss.net" or ".test"
+  timezone: Europe/Moscow               # Etc/UTC or Europe/Moscow
 
 plus:
   plus_logger_type: stream              # plus logger type; stream - writing to file, graylog - sending to server 

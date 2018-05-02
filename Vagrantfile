@@ -64,9 +64,9 @@ Vagrant.configure("2") do |config|
     node.vm.provision "shell", inline: <<-SHELL
       #!/usr/bin/env bash
       if [ ! -d /etc/ansible/facts.d ]; then
-        yum install epel-release -y
-        yum install ansible -y
-        yum install wget -y
+        yum install epel-release ansible wget -y &>/dev/null
+        yum repolist &>/dev/null
+        yum update -y &>/dev/null
       fi
       wget --no-check-certificate 'https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub' -O /home/vagrant/.ssh/authorized_keys 2>/dev/null
       chmod 600 /home/vagrant/.ssh/authorized_keys

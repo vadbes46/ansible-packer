@@ -51,6 +51,8 @@
     - vim
     - traceroute
     - python-pip
+    - yum-utils
+    # - subscription-manager
     # - golang
     # - locales
     # - pkg-config

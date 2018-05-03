@@ -50,8 +50,8 @@ Vagrant.configure("2") do |config|
 
     node.vm.synced_folder "./", "/vagrant", disabled: true # disable default mapping
     node.vm.synced_folder "./", "#{config.user.path.root_dir}/ansible-centos", create: true
-    node.vm.synced_folder config.user.path.plus, "#{config.user.path.root_dir}/plus", create: true, mount_options: ["dmode=777,fmode=777"]
-    node.vm.synced_folder config.user.path.logs, "#{config.user.path.root_dir}/logs", create: true, owner: "vagrant", group: "vagrant", mount_options: ["dmode=777,fmode=777"] # sync guest logs to the host
+    node.vm.synced_folder config.user.path.plus, "#{config.user.path.root_dir}/plus", type: "virtualbox", create: true, mount_options: ["dmode=777,fmode=777"]
+    node.vm.synced_folder config.user.path.logs, "#{config.user.path.root_dir}/logs", type: "virtualbox", create: true, owner: "vagrant", group: "vagrant", mount_options: ["dmode=777,fmode=777"] # sync guest logs to the host
 
     node.hostmanager.aliases = [
       "#{config.user.host.host_plus}",

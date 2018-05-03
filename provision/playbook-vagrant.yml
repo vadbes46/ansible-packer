@@ -8,6 +8,8 @@
     - ../.vagrantuser
   roles:
     - pre-task
+    # - nginx
+    - php
     # - app
     # - plus
     # - nginx
@@ -23,6 +25,8 @@
     - ../.vagrantuser
   roles:
     - pre-task
+    # - nginx
+    - php
     # - app
     # - plus
     # - nginx

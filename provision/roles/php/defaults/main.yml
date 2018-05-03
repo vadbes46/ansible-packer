@@ -1,0 +1,24 @@
+---
+php_packages:
+  - php-devel
+  - php-common
+  - php-cli
+  - php-intl
+  - php-curl
+  - php-cgi
+  - php-fpm
+  - php-mbstring
+  - php-mysql
+  - php-soap
+  - php-memcached
+  - php-dom
+  - php-xml
+  - php-zip
+  - php-odbc
+  - php-pdo
+
+php_extension_conf_paths:
+  - /etc/php-fpm.d
+  - /etc/php.d
+
+ext_workspace: "/home/vagrant"

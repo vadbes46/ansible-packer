@@ -30,6 +30,7 @@ Vagrant.configure("2") do |config|
   # config.vbguest.yes = false
 
   config.vm.provider "virtualbox" do |v|
+    v.gui = false
     v.memory = config.user.env.memory
     v.cpus = config.user.env.cpus
     v.customize ['modifyvm', :id, '--vram', 128]
@@ -50,8 +51,9 @@ Vagrant.configure("2") do |config|
 
     node.vm.synced_folder "./", "/vagrant", disabled: true # disable default mapping
     node.vm.synced_folder "./", "#{config.user.path.root_dir}/ansible-centos", create: true
-    node.vm.synced_folder config.user.path.plus, "#{config.user.path.root_dir}/plus", type: "virtualbox", create: true, mount_options: ["dmode=777,fmode=777"]
-    node.vm.synced_folder config.user.path.logs, "#{config.user.path.root_dir}/logs", type: "virtualbox", create: true, owner: "vagrant", group: "vagrant", mount_options: ["dmode=777,fmode=777"] # sync guest logs to the host
+    node.vm.synced_folder config.user.path.plus, "#{config.user.path.root_dir}/plus", create: true, mount_options: ["dmode=777,fmode=777"]
+    node.vm.synced_folder config.user.path.logs, "#{config.user.path.root_dir}/logs", create: true, owner: "vagrant", group: "vagrant", mount_options: ["dmode=777,fmode=777"] # sync guest logs to the host
+    # node.vm.synced_folder ".", "/home/bitrix/www", owner: "bitrix", group: "bitrix", type: "smb", mount_options: ["mfsymlinks,dir_mode=0755,file_mode=0755"]
 
     node.hostmanager.aliases = [
       "#{config.user.host.host_plus}",

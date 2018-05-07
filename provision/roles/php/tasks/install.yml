@@ -18,14 +18,17 @@
     enablerepo: remi-php72
     state: latest
 
-# - name: install php packages
-#   yum:
-#     name: "{{item}}"
-#     enablerepo: remi-php70
-#     state: present
-#   with_items: "{{php_packages}}"
-#   when: php_packages is defined
-#   notify:
-#     - restart php7-fpm
+- name: install php packages
+  yum:
+    name: "{{ item }}"
+    enablerepo: remi-php72
+    state: present
+  with_items: "{{ php_packages }}"
+  when: php_packages is defined
+  notify:
+    - restart php-fpm
 
-
+- name: enable php-fpm service
+  service:
+    name: php-fpm
+    enabled: yes

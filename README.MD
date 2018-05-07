@@ -1,9 +1,41 @@
+Table of Contents
+- [Ansible for CentOS](#ansible-for-centos)
+- [Features](#features)
+- [Installed Software](#installed-software)
+    - [PHP 7.2.5 with extensions:](#php-725-with-extensions)
+- [TODO](#todo)
+
 # Ansible for CentOS
 
 Шаблончик нового ансибла
-Сейчас только плюс
 
-## TODO
+# Features
+1. private VM ip is configured through .vagrantuser
+2. same for timezone, system time (influences on mysql, php)
+3. .
+
+# Installed Software
+## PHP 7.2.5 with extensions:
+- php-bcmath
+- php-cli
+- php-common
+- php-devel
+- php-fpm
+- php-gd
+- php-intl
+- php-json
+- php-mbstring
+- php-mysqlnd
+- php-odbc
+- php-pdo
+- php-pecl-gearman
+- php-pecl-memcached
+- php-pecl-zip
+- php-soap
+- php-xml
+
+
+# TODO
 
 1. в боксе по дефолту не заенейблин nginx
 

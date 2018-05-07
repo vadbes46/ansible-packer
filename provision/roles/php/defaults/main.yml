@@ -1,21 +1,22 @@
 ---
 php_packages:
-  - php-devel
-  - php-common
+  - php-bcmath
   - php-cli
-  - php-intl
-  - php-curl
-  - php-cgi
+  - php-common
+  - php-devel
   - php-fpm
+  - php-gd
+  - php-intl
+  - php-json
   - php-mbstring
-  - php-mysql
-  - php-soap
-  - php-memcached
-  - php-dom
-  - php-xml
-  - php-zip
+  - php-mysqlnd
   - php-odbc
   - php-pdo
+  - php-pecl-gearman
+  - php-pecl-memcached
+  - php-pecl-zip
+  - php-soap
+  - php-xml
 
 php_extension_conf_paths:
   - /etc/php-fpm.d

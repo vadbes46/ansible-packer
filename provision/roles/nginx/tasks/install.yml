@@ -1,0 +1,23 @@
+---
+- name: add nginx repository
+  yum_repository:
+    name: nginx-stable
+    description: nginx stable
+    enabled: yes
+    gpgcheck: no
+    baseurl: http://nginx.org/packages/centos/7/x86_64/
+
+- name: install nginx
+  yum:
+    name: nginx
+    enablerepo: nginx-stable
+    state: latest
+
+- name: enable nginx service
+  service:
+    name: nginx
+    enabled: yes
+  notify:
+    - reload nginx
+    - restart nginx
+  changed_when: true

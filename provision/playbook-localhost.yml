@@ -8,11 +8,13 @@
     - ../.vagrantuser
   roles:
     - pre-task
-    # - nginx
+    - nginx
     - php
+    # - mysql
+    # - composer
+    # - vertica
     # - app
     # - plus
-    # - nginx
   tags:
     - localhost_cloud
 
@@ -25,11 +27,13 @@
     - ../.vagrantuser
   roles:
     - pre-task
-    # - nginx
+    - nginx
     - php
+    # - mysql
+    # - composer
+    # - vertica
     # - app
     # - plus
-    # - nginx
   tags:
     - localhost_dev
 
@@ -42,10 +46,12 @@
     - ../.vagrantuser
   roles:
     - pre-task
-    # - nginx
+    - nginx
     - php
+    # - mysql
+    # - composer
+    # - vertica
     # - app
     # - plus
-    # - nginx
   tags:
     - localhost_qa

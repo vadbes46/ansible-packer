@@ -8,11 +8,13 @@
     - ../.vagrantuser
   roles:
     - pre-task
-    # - nginx
+    - nginx
     - php
+    # - mysql
+    # - composer
+    # - vertica
     # - app
     # - plus
-    # - nginx
   tags:
     - vagrant_dev
 
@@ -25,10 +27,12 @@
     - ../.vagrantuser
   roles:
     - pre-task
-    # - nginx
+    - nginx
     - php
+    # - mysql
+    # - composer
+    # - vertica
     # - app
     # - plus
-    # - nginx
   tags:
     - vagrant_office

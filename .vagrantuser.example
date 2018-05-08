@@ -35,3 +35,7 @@ host:                                   # virtual hosts inside VM
   host_mock: "mock01.ecpdss.net"
   host_keydaemon: "gate.test:12080"
   host_memcached: "gate.test"
+
+nginx_fpm:
+  user_group: "www-data"
+  id_gid: "1010"

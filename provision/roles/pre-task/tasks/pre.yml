@@ -52,6 +52,7 @@
     - traceroute
     - python-pip
     - yum-utils
+    - net-tools
     # - subscription-manager
     # - golang
     # - locales
@@ -106,7 +107,14 @@
 #     state: present
 
 - name: pam_limits remove default
-  shell: "rm -rf /etc/security/limits.d/* warn=no"
+  shell: |
+    if [ -n "$(ls -A /etc/security/limits.d/ 2>/dev/null)" ]; then
+        rm -rf /etc/security/limits.d/*
+    fi
+  args:
+    executable: /bin/bash
+  register: shell_res
+  changed_when: false
 
 - name: pam_limits
   pam_limits:
@@ -125,14 +133,36 @@
 - name: pam_limits to system-auth
   lineinfile:
     dest: /etc/pam.d/system-auth
-    regexp: 'session.*required.*pam_limits.so'
-    line: 'session     required      pam_limits.so'
+    regexp: "session.*required.*pam_limits.so"
+    line: "session     required      pam_limits.so"
 
-# - name: add deployer_user to www-data
-#   user:
-#     name: "{{ env.username }}"
-#     append: yes
-#     groups: www-data
+- name: stop services owner by "{{ nginx_fpm.user_group }}"
+  service:
+    name: "{{ item }}"
+    state: stopped
+  with_items:
+    - php-fpm
+    - nginx
+
+- name: add group "{{ nginx_fpm.user_group }}"
+  group:
+    name: "{{ nginx_fpm.user_group }}"
+    gid: "{{ nginx_fpm.id_gid }}"
+    state: present
+
+- name: add user "{{ nginx_fpm.user_group }}"
+  user:
+    name: "{{ nginx_fpm.user_group }}"
+    group: "{{ nginx_fpm.user_group }}"
+    uid: "{{ nginx_fpm.id_gid }}"
+    create_home: no
+    system: yes
+
+- name: add deployer_user to "{{ nginx_fpm.user_group }}"
+  user:
+    name: "{{ env.username }}"
+    append: yes
+    groups: "{{ nginx_fpm.user_group }}"
 
 # - name: locale gen
 #   locale_gen:

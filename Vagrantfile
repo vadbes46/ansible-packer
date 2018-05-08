@@ -7,7 +7,7 @@ required_plugins.each do |plugin|
     need_restart = true
   end
 end
-exec "vagrant #{ARGV.join' '}" if need_restart
+exec "vagrant #{ARGV.join" "}" if need_restart
 
 # configure VM
 Vagrant.configure("2") do |config|
@@ -33,21 +33,21 @@ Vagrant.configure("2") do |config|
     v.gui = false
     v.memory = config.user.env.memory
     v.cpus = config.user.env.cpus
-    v.customize ['modifyvm', :id, '--vram', 128]
-    v.customize ['modifyvm', :id, '--acpi', 'on']
-    v.customize ['modifyvm', :id, '--ioapic', 'on']
-    v.customize ['modifyvm', :id, '--vrde', 'off']
-    v.customize ['modifyvm', :id, '--audio', 'none']
-    v.customize ['modifyvm', :id, '--paravirtprovider', 'kvm']
-    v.customize ["modifyvm", :id, '--natdnsproxy1', 'on']
-    v.customize ["modifyvm", :id, '--natdnshostresolver1', 'on']
-    v.customize ['modifyvm', :id, '--nictype1', 'virtio']
+    v.customize ["modifyvm", :id, "--vram", 128]
+    v.customize ["modifyvm", :id, "--acpi", "on"]
+    v.customize ["modifyvm", :id, "--ioapic", "on"]
+    v.customize ["modifyvm", :id, "--vrde", "off"]
+    v.customize ["modifyvm", :id, "--audio", "none"]
+    v.customize ["modifyvm", :id, "--paravirtprovider", "kvm"]
+    v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+    v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    v.customize ["modifyvm", :id, "--nictype1", "virtio"]
   end
 
-  config.vm.define 'centos' do |node|
-    node.vm.hostname = 'ansible-centos'
-    node.vm.network "private_network", nic_type: 'virtio', ip: "#{config.user.env.ip}"
-    # node.vm.network "private_network", nic_type: 'virtio', type: "dhcp"
+  config.vm.define "centos" do |node|
+    node.vm.hostname = "ansible-centos"
+    node.vm.network "private_network", nic_type: "virtio", ip: "#{config.user.env.ip}"
+    # node.vm.network "private_network", nic_type: "virtio", type: "dhcp"
 
     node.vm.synced_folder "./", "/vagrant", disabled: true # disable default mapping
     node.vm.synced_folder "./", "#{config.user.path.root_dir}/ansible-centos", create: true
@@ -70,7 +70,7 @@ Vagrant.configure("2") do |config|
         yum repolist &>/dev/null
         yum update -y &>/dev/null
       fi
-      wget --no-check-certificate 'https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub' -O /home/vagrant/.ssh/authorized_keys 2>/dev/null
+      wget --no-check-certificate "https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub" -O /home/vagrant/.ssh/authorized_keys 2>/dev/null
       chmod 600 /home/vagrant/.ssh/authorized_keys
       chmod 600 /home/vagrant/.ssh/id_rsa
       chmod 644 /home/vagrant/.ssh/id_rsa.pub

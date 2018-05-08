@@ -1,0 +1,135 @@
+---
+# - name: disable default site
+#   file:
+#     path: /etc/nginx/conf.d/default.conf
+#     state: absent
+#   notify:
+#     - reload nginx
+#     - restart nginx
+
+- name: configure nginx
+  lineinfile:
+    path: "/etc/nginx/nginx.conf"
+    regexp: "{{ item.reg }}"
+    line: "{{ item.value }}"
+    backrefs: yes
+  with_items:
+    - { reg: '^user', value: 'user {{ nginx_fpm.user_group }};' }
+    - { reg: '^worker_processes', value: 'worker_processes auto;' }
+    - { reg: '.*sendfile', value: '    sendfile off;' }
+    - { reg: '.*gzip', value: '    gzip on;' }
+  notify:
+    - reload nginx
+    - restart nginx
+
+# diff options
+#     include /etc/nginx/modules-enabled/*.conf;
+#     tcp_nodelay on;
+#     types_hash_max_size 2048;
+#     ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
+#     ssl_prefer_server_ciphers on;
+#     include /etc/nginx/sites-enabled/*;
+
+# diff files
+#     mime.types
+#     win-utf
+#     modules -> ../../usr/lib64/nginx/modules
+
+
+
+# - name: put cert files
+#   copy:
+#     src: "cert/{{ item }}"
+#     dest: "/etc/nginx/cert/"
+#     owner: root
+#     group: root
+#     mode: 0644
+#   with_items:
+#     - "ecpdss.net.key"
+#     - "ecpdss.net.pem"
+
+
+
+# - name: configure virtual hosts CentOS
+#   template:
+#     src: "nginx.{{ item }}.conf.j2"
+#     dest: "/etc/nginx/conf.d/nginx.{{ item }}.conf"
+#   with_items:
+#   #  - gate
+#   #  - worker
+#   #  - admin
+#   #  - nadmin
+#    - plus
+#   #  - mock
+#   #  - xhprof
+#   #  - tracer
+#   #  - default
+#   notify: reload nginx
+#   # when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+
+
+# - name: configure virtual hosts for local mock
+#   template:
+#     src: "nginx.{{ item }}.conf.j2"
+#     dest: "/etc/nginx/sites-available/nginx.{{ item }}.conf"
+#   with_items:
+#     - "{{ external_hosts }}"
+#   notify: reload nginx
+#   when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+# - name: disable prev sites
+#   file:
+#     path: "/etc/nginx/sites-enabled/nginx.{{ item }}.conf"
+#     state: absent
+#   with_items:
+#    - gate
+#    - worker
+#    - admin
+#    - nadmin
+#    - plus
+#    - mock
+#    - xhprof
+#    - tracer
+#    - default
+#   when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+# - name: disable prev sites for local mock
+#   file:
+#     path: "/etc/nginx/sites-enabled/nginx.{{ item }}.conf"
+#     state: absent
+#   with_items:
+#     - "{{ external_hosts }}"
+#   when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+# - name: enable created sites
+#   file:
+#     src: "/etc/nginx/sites-available/nginx.{{ item }}.conf"
+#     dest: "/etc/nginx/sites-enabled/nginx.{{ item }}.conf"
+#     state: link
+#   with_items:
+#    - gate
+#    - worker
+#    - admin
+#    - nadmin
+#    - plus
+#    - mock
+#    - xhprof
+#    - tracer
+#    - default
+#   notify:
+#     - reload nginx
+#     - restart nginx
+#   when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+# - name: enable created sites for local mock
+#   file:
+#     src: "/etc/nginx/sites-available/nginx.{{ item }}.conf"
+#     dest: "/etc/nginx/sites-enabled/nginx.{{ item }}.conf"
+#     state: link
+#   with_items:
+#     - "{{ external_hosts }}"
+#   notify:
+#     - reload nginx
+#     - restart nginx
+#   when: local_mock
+#   when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'

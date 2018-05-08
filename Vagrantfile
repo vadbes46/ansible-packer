@@ -1,3 +1,5 @@
+Vagrant.require_version '>= 2.1.0'
+
 # require 'yaml'
 # require 'json'
 
@@ -11,6 +13,20 @@ required_plugins.each do |plugin|
   end
 end
 exec "vagrant #{ARGV.join" "}" if need_restart
+
+# check .vagrantuser
+vagrantUserDir = File.expand_path(File.dirname(__FILE__))
+if File.exist? vagrantUserDir + "/.vagrantuser" then
+  vagrantuserDate = File.mtime(vagrantUserDir + "/.vagrantuser")
+  vagrantuserExampleDate = File.mtime(vagrantUserDir + "/.vagrantuser.example")
+  if (vagrantuserDate.to_f < vagrantuserExampleDate.to_f)
+    puts "\t" + "\e[41m.vagrantuser\e[0m" + " file is " + "\e[41mOUTDATED\e[0m" + "\n\t" + "please recreate"
+    exit 0
+  end
+else
+  puts "\t" + "\e[41m.vagrantuser\e[0m" + " file " + "\e[41mNOT FOUND\e[0m" + " in:" + "\n\t" + "#{vagrantUserDir}"
+  exit 0
+end
 
 # configure VM
 Vagrant.configure("2") do |config|
@@ -98,13 +114,19 @@ Vagrant.configure("2") do |config|
           # # Double-splat (**) operator only works with symbol keys, so convert
           # options.keys.each{|k| options[k.to_sym] = options.delete(k) }
 
-
           # debug 2
           # node.vm.provision "shell", privileged: false, inline: <<-SHELL
           #   #!/usr/bin/env bash
           #   echo #{sync_folder.path.sub("../", '')}
           #   echo #{sync_folder.path.split('/')[0...-1].join('/')}
           #   echo #{sync_folder.path.split('/').last}
+          # SHELL
+
+          # debug 3
+          # vagrantUser = vagrantUserDir + "/.vagrantuser"
+          # node.vm.provision "shell", privileged: false, inline: <<-SHELL
+          #   #!/usr/bin/env bash
+          #   echo #{vagrantUser}
           # SHELL
 
           config.vm.synced_folder sync_folder["path"],

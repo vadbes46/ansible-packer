@@ -136,6 +136,11 @@
     regexp: "session.*required.*pam_limits.so"
     line: "session     required      pam_limits.so"
 
+- name: get services owner by "{{ nginx_fpm.user_group }}"
+  shell: "systemctl list-unit-files | grep -E 'php-fpm|nginx'"
+  register: www_services
+  failed_when: www_services.rc == 2
+
 - name: stop services owner by "{{ nginx_fpm.user_group }}"
   service:
     name: "{{ item }}"
@@ -143,6 +148,7 @@
   with_items:
     - php-fpm
     - nginx
+  when: www_services.rc == 0
 
 - name: add group "{{ nginx_fpm.user_group }}"
   group:

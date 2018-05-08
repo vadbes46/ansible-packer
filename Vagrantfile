@@ -86,7 +86,7 @@ Vagrant.configure("2") do |config|
           # TODO
 
           # debug 1
-          config.vm.provision "shell", run: "always", inline: <<-SHELL
+          config.vm.provision "shell", privileged: false, run: "always", inline: <<-SHELL
             #!/usr/bin/env bash
             echo "#{sync_folder.path} #{sync_type} #{owner}:#{group} #{mount_options}"
             # echo #{options}
@@ -100,7 +100,7 @@ Vagrant.configure("2") do |config|
 
 
           # debug 2
-          # node.vm.provision "shell", inline: <<-SHELL
+          # node.vm.provision "shell", privileged: false, inline: <<-SHELL
           #   #!/usr/bin/env bash
           #   echo #{sync_folder.path.sub("../", '')}
           #   echo #{sync_folder.path.split('/')[0...-1].join('/')}
@@ -138,7 +138,7 @@ Vagrant.configure("2") do |config|
 
     node.vm.provision "file", source: config.user.id_rsa.deployer_id_rsa, destination: "/home/vagrant/.ssh/id_rsa"
     node.vm.provision "file", source: config.user.id_rsa.deployer_id_rsa_pub, destination: "/home/vagrant/.ssh/id_rsa.pub"
-    node.vm.provision "shell", inline: <<-SHELL
+    node.vm.provision "shell", privileged: false, inline: <<-SHELL
       #!/usr/bin/env bash
       if [ ! -d /etc/ansible/facts.d ]; then
         yum install epel-release ansible wget -y &>/dev/null
@@ -177,7 +177,7 @@ Vagrant.configure("2") do |config|
     end
 
     if config.user.env.in_office then
-      node.vm.provision "shell", run: "always", inline: <<-SHELL
+      node.vm.provision "shell", privileged: false, run: "always", inline: <<-SHELL
         #!/usr/bin/env bash
         bash /etc/rc.local
       SHELL

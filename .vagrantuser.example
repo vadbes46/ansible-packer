@@ -2,28 +2,33 @@
 # ADJUST THESE SETTINGS
 # ------------------------------------------------------------------------------------------------------------------------------------
 env:
-  username: vagrant                     # who is provisioning
-  ip: "192.168.15.15"                   # private network ip
-  memory: 4096                          # 6144 or 8096 for async plus
-  cpus: 4                               # Use `2` for i5 and `4` for i7
-  in_office: false                      # whether to register in office network
-  host_prefix: ""                       # "amazon1." or "vbesedin."
-  host_postfix: ".test"                 # "-cex.ecpdss.net", "-gate2025.ecpdss.net", "-demogate.ecpdss.net" or ".test"
-  timezone: Europe/Moscow               # Etc/UTC or Europe/Moscow
+  username: vagrant                               # who is provisioning
+  ip: "192.168.15.15"                             # private network ip
+  memory: 4096                                    # 6144 or 8096 for async plus
+  cpus: 4                                         # Use `2` for i5 and `4` for i7
+  in_office: false                                # whether to register in office network
+  host_prefix: ""                                 # "amazon1." or "vbesedin."
+  host_postfix: ".test"                           # "-cex.ecpdss.net", "-gate2025.ecpdss.net", "-demogate.ecpdss.net" or ".test"
+  timezone: Europe/Moscow                         # Etc/UTC or Europe/Moscow
 
 plus:
-  plus_logger_type: stream              # plus logger type; stream - writing to file, graylog - sending to server 
-  plus_graylog_system_name: dev         # switch type graylog and system_name, e.g. vbesedin-plus
-  plus_workers_autostart: false         # configure plus workers to autostart in supervisor
-  plus_ram_path: "/www/plus/ram"        # path on the guest of plus ram folder
+  plus_logger_type: stream                        # plus logger type; stream - writing to file, graylog - sending to server 
+  plus_graylog_system_name: dev                   # switch type graylog and system_name, e.g. vbesedin-plus
+  plus_workers_autostart: false                   # configure plus workers to autostart in supervisor
+  plus_ram_path: "/www/plus/ram"                  # path on the guest of plus ram folder
 
 # ------------------------------------------------------------------------------------------------------------------------------------
 # ADDITIONAL PARAMS
 # ------------------------------------------------------------------------------------------------------------------------------------
-path:                                   # relative local paths to repos (in case all repos are in one folder)
-  root_dir:  "/data"
-  logs:      "../logs"
-  plus:      "../plus"                  # https://stash.paymantix.com/projects/PHP/repos/plus/browse
+path:                                             # relative local paths to repos (in case all repos are in one folder)
+  root_dir:       "/data"
+  sync_folder:
+    - path:       "../logs"                       # sync guest logs to the host
+      mount:                "dmode=777,fmode=777"
+      owner:                "vagrant"
+      group:                "www-data"
+    - path:       "../plus"                       # https://stash.paymantix.com/projects/PHP/repos/plus/browse
+      group:                "www-data"
 
 id_rsa:                                 # these keys must be authorized for work with ecommpay stash repos (no passphrase)
   deployer_id_rsa: "~/.ssh/id_rsa"

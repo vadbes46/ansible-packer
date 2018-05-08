@@ -49,11 +49,57 @@ Vagrant.configure("2") do |config|
     node.vm.network "private_network", nic_type: "virtio", ip: "#{config.user.env.ip}"
     # node.vm.network "private_network", nic_type: "virtio", type: "dhcp"
 
-    node.vm.synced_folder "./", "/vagrant", disabled: true # disable default mapping
+    # register shared folders
+    node.vm.synced_folder "./", "/vagrant", disabled: true # disable default mapping    
     node.vm.synced_folder "./", "#{config.user.path.root_dir}/ansible-centos", create: true
-    node.vm.synced_folder config.user.path.plus, "#{config.user.path.root_dir}/plus", create: true, mount_options: ["dmode=777,fmode=777"]
-    node.vm.synced_folder config.user.path.logs, "#{config.user.path.root_dir}/logs", create: true, owner: "vagrant", group: "vagrant", mount_options: ["dmode=777,fmode=777"] # sync guest logs to the host
     # node.vm.synced_folder ".", "/home/bitrix/www", owner: "bitrix", group: "bitrix", type: "smb", mount_options: ["mfsymlinks,dir_mode=0755,file_mode=0755"]
+    if config.user.path.include? "sync_folder"
+      config.user.path["sync_folder"].each do |sync_folder|
+        if File.exists? File.expand_path(sync_folder["path"])
+          # debug 1
+          # config.vm.provision "shell" do |s|
+          #   s.inline = "echo #{sync_folder.path}"
+          # end
+
+          # mount_opts = []
+
+          # if (folder["type"] == "nfs")
+          #   mount_opts = folder["mount_options"] ? folder["mount_options"] : ['actimeo=1', 'nolock']
+          # elsif (folder["type"] == "smb")
+          #   mount_opts = folder["mount_options"] ? folder["mount_options"] : ['vers=3.02', 'mfsymlinks']
+          # end
+
+          # # For b/w compatibility keep separate 'mount_opts', but merge with options
+          # options = (folder["options"] || {}).merge({ mount_options: mount_opts })
+
+          # # Double-splat (**) operator only works with symbol keys, so convert
+          # options.keys.each{|k| options[k.to_sym] = options.delete(k) }
+
+
+          # debug 2
+          # node.vm.provision "shell", inline: <<-SHELL
+          #   #!/usr/bin/env bash
+          #   echo #{sync_folder.path.sub("../", '')}
+          #   echo #{sync_folder.path.split('/')[0...-1].join('/')}
+          # SHELL
+
+          config.vm.synced_folder sync_folder["path"],
+            "#{config.user.path.root_dir}/#{sync_folder.path.sub("../", '')}"
+          # type: folder["type"] ||= nil, **options
+
+    #         # Bindfs support to fix shared folder (NFS) permission issue on Mac
+    #         if (folder["type"] == "nfs")
+    #             if Vagrant.has_plugin?("vagrant-bindfs")
+    #                 config.bindfs.bind_folder folder["to"], folder["to"]
+    #             end
+    #         end
+        else
+          config.vm.provision "shell" do |s|
+            s.inline = ">&2 echo \"Unable to mount #{sync_folder.path}\""
+          end
+        end
+      end
+    end
 
     node.hostmanager.aliases = [
       "#{config.user.host.host_plus}",

@@ -24,17 +24,26 @@ path:                                             # relative local paths to repo
   root_dir:       "/data"
   sync_folder:
     - path:       "../logs"                       # sync guest logs to the host
-      mount:                "dmode=777,fmode=777"
-      owner:                "vagrant"
-      group:                "www-data"
+      mount:                                      ["dmode=777", "fmode=777"]
+      group:                                      "www-data"
     - path:       "../plus"                       # https://stash.paymantix.com/projects/PHP/repos/plus/browse
-      group:                "www-data"
 
-id_rsa:                                 # these keys must be authorized for work with ecommpay stash repos (no passphrase)
+# mount_options will have precedence over the owner and group options.
+# config.vm.synced_folder ".", "/vagrant", owner: "vagrant", group: "vagrant", mount_options: ["uid=1234", "gid=1234"] # ignore owner/group
+
+# folders:
+#     - map: ~/code
+#       to: /home/vagrant/code
+#       type: "rsync"
+#       options:
+#           rsync__args: ["--verbose", "--archive", "--delete", "-zz"]
+#           rsync__exclude: ["node_modules"]
+
+id_rsa:                                           # these keys must be authorized for work with ecommpay stash repos (no passphrase)
   deployer_id_rsa: "~/.ssh/id_rsa"
   deployer_id_rsa_pub: "~/.ssh/id_rsa.pub"
 
-host:                                   # virtual hosts inside VM
+host:                                             # virtual hosts inside VM
   host_plus: "plus.plus"
   host_gate: "gate.test"
   host_mock: "mock01.ecpdss.net"

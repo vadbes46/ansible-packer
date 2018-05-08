@@ -1,3 +1,6 @@
+# require 'yaml'
+# require 'json'
+
 # install plugins
 need_restart = false
 required_plugins = %w(vagrant-vbguest nugrant vagrant-cachier vagrant-hostmanager vagrant-disksize vagrant-bindfs)
@@ -42,6 +45,7 @@ Vagrant.configure("2") do |config|
     v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
     v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     v.customize ["modifyvm", :id, "--nictype1", "virtio"]
+    # v.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"] # symbolic links
   end
 
   config.vm.define "centos" do |node|
@@ -56,21 +60,40 @@ Vagrant.configure("2") do |config|
     if config.user.path.include? "sync_folder"
       config.user.path["sync_folder"].each do |sync_folder|
         if File.exists? File.expand_path(sync_folder["path"])
+
+          sync_type = nil
+          owner = nil
+          group = nil
+          mount_options = nil
+          options = nil
+
+          if sync_folder.include? "type"
+            if (sync_folder["type"] == "nfs")
+              mount_options = sync_folder["mount"] ? sync_folder["mount"] : ['actimeo=1', 'nolock']
+              sync_type = "nfs"
+            elsif (sync_folder["type"] == "smb")
+              mount_options = sync_folder["mount"] ? sync_folder["mount"] : ['vers=3.02', 'mfsymlinks']
+              sync_type = "smb"
+            end
+          end
+
+          sync_type = sync_type ? sync_type : "virtualbox"
+          owner = (sync_folder.has_key?("owner") && sync_folder["owner"]) ? sync_folder["owner"] : "vagrant"
+          group = (sync_folder.has_key?("group") && sync_folder["group"]) ? sync_folder["group"] : "vagrant"
+          mount_options = mount_options ? mount_options : (sync_folder.has_key?("mount") && sync_folder["mount"] ? sync_folder["mount"] : [])
+
+          # check if user `www-data` exists
+          # TODO
+
           # debug 1
-          # config.vm.provision "shell" do |s|
-          #   s.inline = "echo #{sync_folder.path}"
-          # end
+          config.vm.provision "shell", run: "always", inline: <<-SHELL
+            #!/usr/bin/env bash
+            echo "#{sync_folder.path} #{sync_type} #{owner}:#{group} #{mount_options}"
+            # echo #{options}
+          SHELL
 
-          # mount_opts = []
-
-          # if (folder["type"] == "nfs")
-          #   mount_opts = folder["mount_options"] ? folder["mount_options"] : ['actimeo=1', 'nolock']
-          # elsif (folder["type"] == "smb")
-          #   mount_opts = folder["mount_options"] ? folder["mount_options"] : ['vers=3.02', 'mfsymlinks']
-          # end
-
-          # # For b/w compatibility keep separate 'mount_opts', but merge with options
-          # options = (folder["options"] || {}).merge({ mount_options: mount_opts })
+          # For b/w compatibility keep separate 'mount_options', but merge with options
+          # options = (sync_folder["mount"] || {}).merge({ mount: mount_options })
 
           # # Double-splat (**) operator only works with symbol keys, so convert
           # options.keys.each{|k| options[k.to_sym] = options.delete(k) }
@@ -85,8 +108,12 @@ Vagrant.configure("2") do |config|
           # SHELL
 
           config.vm.synced_folder sync_folder["path"],
-            "#{config.user.path.root_dir}/#{sync_folder.path.split('/').last}"
-          # type: folder["type"] ||= nil, **options
+            "#{config.user.path.root_dir}/#{sync_folder.path.split('/').last}",
+            type: sync_type,
+            owner: owner,
+            group: group,
+            mount_options: mount_options
+            # **options
 
     #         # Bindfs support to fix shared folder (NFS) permission issue on Mac
     #         if (folder["type"] == "nfs")
@@ -94,6 +121,7 @@ Vagrant.configure("2") do |config|
     #                 config.bindfs.bind_folder folder["to"], folder["to"]
     #             end
     #         end
+
         else
           config.vm.provision "shell" do |s|
             s.inline = ">&2 echo \"Unable to mount #{sync_folder.path}\""

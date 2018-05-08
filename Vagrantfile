@@ -81,10 +81,11 @@ Vagrant.configure("2") do |config|
           #   #!/usr/bin/env bash
           #   echo #{sync_folder.path.sub("../", '')}
           #   echo #{sync_folder.path.split('/')[0...-1].join('/')}
+          #   echo #{sync_folder.path.split('/').last}
           # SHELL
 
           config.vm.synced_folder sync_folder["path"],
-            "#{config.user.path.root_dir}/#{sync_folder.path.sub("../", '')}"
+            "#{config.user.path.root_dir}/#{sync_folder.path.split('/').last}"
           # type: folder["type"] ||= nil, **options
 
     #         # Bindfs support to fix shared folder (NFS) permission issue on Mac

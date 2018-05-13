@@ -20,7 +20,7 @@ It has been grown from Ubuntu environment with all enhancements continuously app
 2. timezone (system time) is configurable (influences on mysql, php)
 3. all synced folders are defined in .vagrantuser, so never change Vagrantfile
 4. check `www-data` user exists, if not - mount as `vagrant`
-5. check .vagrantuser exists or is outdated, if not - stop executing
+5. check .vagrantuser exists and not outdated, else - stop executing
 6. 
 7. 
 8. ~~Box can be got from vagrant cloud as "rarek/centos7"~~

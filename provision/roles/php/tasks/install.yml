@@ -9,7 +9,7 @@
     key: http://rpms.remirepo.net/RPM-GPG-KEY-remi
     state: present
 
-- name: import remi GPG key
+- name: enable remi repo
   shell: "yum-config-manager --enable remi-php72"
 
 - name: install php

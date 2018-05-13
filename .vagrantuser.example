@@ -52,4 +52,4 @@ host:                                             # virtual hosts inside VM
 
 nginx_fpm:
   user_group: "www-data"
-  id_gid: "1010"
+  id_gid: "5001"

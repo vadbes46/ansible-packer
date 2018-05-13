@@ -16,7 +16,10 @@
   with_items:
     - { reg: '^user', value: 'user {{ nginx_fpm.user_group }};' }
     - { reg: '^worker_processes', value: 'worker_processes auto;' }
+    - { reg: '*.worker_connections', value: '    worker_connections  2048;' }
     - { reg: '.*sendfile', value: '    sendfile off;' }
+    - { reg: '.*tcp_nopush', value: '    tcp_nopush on;' }
+    - { reg: '.*tcp_nodelay', value: '    tcp_nodelay on;' }
     - { reg: '.*gzip', value: '    gzip on;' }
   notify:
     - reload nginx

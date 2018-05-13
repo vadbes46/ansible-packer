@@ -1,0 +1,93 @@
+{
+  "variables": {
+    "username": "vagrant",
+    "userpass": "vagrant",
+    "hostname": "packer-centos-7-x86_64",
+    "memory": "2048",
+    "cpus": "2",
+    "vram": "128",
+    "disk": "15360"
+  },
+
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "guest_os_type": "RedHat_64",
+      "vm_name": "{{ user `hostname` }}",
+
+      "iso_url": "http://mirror.yandex.ru/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1804.iso",
+      "iso_checksum_type": "sha256",
+      "iso_checksum": "714acc0aefb32b7d51b515e25546835e55a90da9fb00417fbee2d03a62801efd",
+
+      "communicator": "ssh",
+      "ssh_username": "{{ user `username` }}",
+      "ssh_password": "{{ user `userpass` }}",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "60m",
+      "ssh_pty": "true",
+
+      "disk_size": "{{ user `disk` }}",
+
+      "boot_wait": "10s",
+      "boot_command": [
+        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/kickstart.cfg<enter><wait>"
+      ],
+
+      "http_directory": "http",
+      "http_port_min": 9001,
+      "http_port_max": 9001,
+
+      "shutdown_command": "echo '{{ user `userpass` }}' | sudo -S /sbin/halt -h -p",
+      "guest_additions_mode": "disable",
+      "hard_drive_interface": "scsi",
+      "headless": true,
+
+      "vboxmanage": [
+        [ "modifyvm", "{{ .Name }}", "--memory", "{{ user `memory` }}" ],
+        [ "modifyvm", "{{ .Name }}", "--cpus", "{{ user `cpus` }}" ],
+        [ "modifyvm", "{{ .Name }}", "--vram", "{{ user `vram` }}" ],
+        [ "modifyvm", "{{ .Name }}", "--acpi", "on" ],
+        [ "modifyvm", "{{ .Name }}", "--ioapic", "on" ],
+        [ "modifyvm", "{{ .Name }}", "--vrde", "off" ],
+        [ "modifyvm", "{{ .Name }}", "--audio", "none" ],
+        [ "modifyvm", "{{ .Name }}", "--paravirtprovider", "kvm" ],
+        [ "modifyvm", "{{ .Name }}", "--nictype1", "virtio" ]
+      ]
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "pause_before": "5s",
+      "execute_command": "echo '{{ user `userpass` }}' | {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
+      "script": "scripts/grub.sh"
+    },
+    {
+      "type": "shell",
+      "pause_before": "5s",
+      "execute_command": "echo '{{ user `userpass` }}' | {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
+      "script": "scripts/cleanup.sh"
+    },
+    {
+      "type": "shell",
+      "pause_before": "5s",
+      "expect_disconnect": true,
+      "execute_command": "echo '{{ user `userpass` }}' | {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
+      "inline": [
+        "echo rebooting...",
+        "sudo reboot",
+        "sleep 10"
+      ]
+    }
+  ],
+
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": true,
+      "output": "builds/{{.Provider}}-{{ user `hostname` }}.box",
+      "compression_level": 9
+    }
+  ]
+}

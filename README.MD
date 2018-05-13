@@ -6,11 +6,14 @@ Table of Contents
     - [```nginx 1.14.0```](#nginx-1140)
     - [```Percona 5.7```](#percona-57)
     - [```composer```](#composer)
+- [```Vagrant Base Box```](#vagrant-base-box)
 - [```TODO```](#todo)
 
 # ```Ansible for CentOS```
 
-This is the template of `new ansible environment` for CentOS 
+This is the template of `new ansible environment` for CentOS.
+
+It has been grown from Ubuntu environment with all enhancements continuously appearing during 9 months.
 
 # ```Features```
 1. private VM ip is configured through .vagrantuser
@@ -51,8 +54,14 @@ FPM is configured to listen ports instead of sockets
 
 ## ```composer```
 
-# ```TODO```
+# ```Vagrant Base Box```
+Commands for building image:
+* `packer build -only=virtualbox-iso -force -on-error=ask box-centos.json`
 
+After a box has been compiled it can be added with the following command
+* `vagrant box add boxcentos ./packer/builds/virtualbox-packer-centos-7-x86_64.box --force`
+
+# ```TODO```
 1. ~~в боксе по дефолту не заенейблин nginx~~
 2. обновить конфиги nginx (он сейчас смотрит на сокет, а фпм на порту) и сами конфиги кривоваты
 3. обновить конфиги фпма, чтобы смотрел на сокет
@@ -60,12 +69,13 @@ FPM is configured to listen ports instead of sockets
 
 переехало с ансибла:
 
-2. при vagrant up выполнить скрипт клона реп
-4. при старте проверить под админом ли, проверить опции git - для винды актуально
-7. плюсовые редиректы аналогично нада сделать plus01.te01-l1.nl3
-8. composer clear-cache не все чистит, где то походу под рутом лежит
+1. при vagrant up выполнить скрипт клона реп
+2. при старте проверить под админом ли, проверить опции git - для винды актуально
+3. плюсовые редиректы аналогично нада сделать plus01.te01-l1.nl3
+4. composer clear-cache не все чистит, где то походу под рутом лежит
+5. ~~сделать пятиминутный крон для чистки логов с проверкой доступности свободного места~~
 
-9. ~~сделать пятиминутный крон для чистки логов с проверкой доступности свободного места~~сделан двухчасовой крон чистки логов, нужно сделать чтоб по заполнению места
-10. добавить таги по системам - plus, pmx, admin, terminal, и скрипты, чтобы можно было бедать провижн только для нужных систем, сократив время
-11. чтоб сверяла даты vagrantuser и example и не делала провижн
-12. намутить locale_gen для centos а то не проходит
+   сделан двухчасовой крон чистки логов, нужно сделать чтоб по заполнению места
+6. добавить таги по системам - plus, pmx, admin, terminal, и скрипты, чтобы можно было делать провижн только для нужных систем, сократив время
+7. ~~чтоб сверяла даты vagrantuser и example и не делала провижн~~
+8. намутить locale_gen для centos а то не проходит

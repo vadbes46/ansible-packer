@@ -7,8 +7,9 @@
 /.vagrantuser
 /.idea
 *.retry
-
-
+/packer/output-virtualbox-iso/
+*.iso
+*.box
 
 /provision/roles/mysql/
 /provision/roles/app/

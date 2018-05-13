@@ -1,0 +1,334 @@
+{
+  "variables": {
+    "deployer_username": "vagrant",
+    "deployer_userpass": "vagrant",
+    "deployer_host": "192.168.13.13",
+    "hostname": "pmx-box",
+    "aws_access_key": "secret thing",
+    "aws_secret_key": "secret thing",
+    "memory": "2048",
+    "cpus": "1",
+    "vram": "128",
+    "disk": "15360"
+  },
+
+  "builders": [
+    {
+      "type": "virtualbox-ovf",
+      "source_path": "c:/Users/vadimbesedin/.vagrant.d/boxes/ubuntu-VAGRANTSLASH-trusty64/20170918.0.1/virtualbox/box.ovf",
+
+      "communicator": "ssh",
+      "ssh_username": "{{ user `deployer_username` }}",
+      "ssh_password": "{{ user `deployer_userpass` }}",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "ssh_pty": "true",
+
+      "boot_wait": "20s",
+
+      "http_directory": "http",
+      "http_port_min": 9001,
+      "http_port_max": 9001,
+
+      "shutdown_command": "echo '{{ user `deployer_userpass` }}' | sudo -S shutdown -P now",
+
+      "vboxmanage": [
+        [ "modifyvm", "{{ .Name }}", "--memory", "{{ user `memory` }}" ],
+        [ "modifyvm", "{{ .Name }}", "--cpus", "{{ user `cpus` }}" ]
+      ]
+    },
+    {
+      "type": "virtualbox-iso",
+      "guest_os_type": "Ubuntu_64",
+      "vm_name": "pmx-box",
+
+      "iso_url": "http://releases.ubuntu.com/xenial/ubuntu-16.04.4-server-amd64.iso",
+      "iso_checksum_type": "md5",
+      "iso_checksum": "6a7f31eb125a0b2908cf2333d7777c82",
+
+      "communicator": "ssh",
+      "ssh_username": "{{ user `deployer_username` }}",
+      "ssh_password": "{{ user `deployer_userpass` }}",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "20m",
+      "ssh_pty": "true",
+
+      "disk_size": "{{ user `disk` }}",
+
+      "boot_wait": "10s",
+      "boot_command": [
+        "<enter><f6><esc>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs>",
+        "/install/vmlinuz noapic <wait>",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed_vbox.cfg <wait>",
+        "debian-installer=en_US auto locale=en_US kbd-chooser/method=us <wait>",
+        "hostname={{ user `hostname` }} <wait>",
+        "fb=false debconf/frontend=noninteractive <wait>",
+        "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA <wait>",
+        "keyboard-configuration/variant=USA console-setup/ask_detect=false <wait>",
+        "initrd=/install/initrd.gz -- <enter><wait>"
+      ],
+
+      "http_directory": "http",
+      "http_port_min": 9001,
+      "http_port_max": 9001,
+
+      "shutdown_command": "echo '{{ user `deployer_userpass` }}' | sudo -S shutdown -P now",
+      "guest_additions_mode": "disable",
+      "hard_drive_interface": "scsi",
+      "headless": false,
+
+      "vboxmanage": [
+        [ "modifyvm", "{{ .Name }}", "--memory", "{{ user `memory` }}" ],
+        [ "modifyvm", "{{ .Name }}", "--cpus", "{{ user `cpus` }}" ],
+        [ "modifyvm", "{{ .Name }}", "--vram", "{{ user `vram` }}" ],
+        [ "modifyvm", "{{ .Name }}", "--acpi", "on" ],
+        [ "modifyvm", "{{ .Name }}", "--ioapic", "on" ],
+        [ "modifyvm", "{{ .Name }}", "--vrde", "off" ],
+        [ "modifyvm", "{{ .Name }}", "--audio", "none" ],
+        [ "modifyvm", "{{ .Name }}", "--paravirtprovider", "kvm" ],
+        [ "modifyvm", "{{ .Name }}", "--natdnsproxy1", "on" ],
+        [ "modifyvm", "{{ .Name }}", "--natdnshostresolver1", "on" ],
+        [ "modifyvm", "{{ .Name }}", "--nictype1", "virtio" ]
+      ]
+    },
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{ user `aws_access_key` }}",
+      "secret_key": "{{ user `aws_secret_key` }}",
+      "region": "us-east-1",
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
+          "root-device-type": "ebs"
+        },
+        "owners": [ "099720109477" ],
+        "most_recent": true
+      },
+      "instance_type": "t2.micro",
+      "ssh_username": "ubuntu",
+      "ami_name": "pmx_box {{ timestamp }}"
+    },
+    {
+      "type": "qemu",
+
+      "iso_url": "http://releases.ubuntu.com/trusty/ubuntu-14.04.5-server-amd64.iso",
+      "iso_checksum_type": "md5",
+      "iso_checksum": "dd54dc8cfc2a655053d19813c2f9aa9f",
+
+      "accelerator": "kvm",
+      "boot_wait": "5s",
+      "boot_command": [
+        "<esc><esc><enter><wait>",
+        "/install/vmlinuz noapic ",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed_qemu.cfg ",
+        "debian-installer=en_US auto locale=en_US kbd-chooser/method=us ",
+        "hostname={{ user `hostname` }} ",
+        "fb=false debconf/frontend=noninteractive ",
+        "keyboard-configuration/modelcode=SKIP ",
+        "keyboard-configuration/layout=USA ",
+        "keyboard-configuration/variant=USA console-setup/ask_detect=false ",
+        "passwd/user-fullname={{ user `deployer_username` }} ",
+        "passwd/user-password={{ user `deployer_userpass` }} ",
+        "passwd/user-password-again={{ user `deployer_userpass` }} ",
+        "passwd/username={{ user `deployer_username` }} ",
+        "initrd=/install/initrd.gz -- <enter>"
+      ],
+      "disk_size": "{{ user `disk` }}",
+
+      "http_directory": "http",
+      "http_port_min": 9001,
+      "http_port_max": 9001,
+
+      "output_directory": "{{ user `hostname` }}",
+      "vm_name": "{{ user `hostname` }}",
+
+      "shutdown_command": "echo '{{ user `deployer_userpass` }}' | sudo -S shutdown -P now",
+
+      "format": "qcow2",
+      "headless": false,
+
+      "communicator": "ssh",
+      "ssh_username": "{{ user `deployer_username` }}",
+      "ssh_password": "{{ user `deployer_userpass` }}",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "20m",
+
+      "qemuargs": [
+        [ "-m", "{{ user `memory` }}" ],
+        [ "-smp", "cpus={{ user `cpus`}}" ]
+      ],
+
+      "net_device": "virtio-net",
+      "disk_interface": "virtio"
+    }
+  ],
+
+  "provisioners": [
+    {
+      "only": [ "qemu" ],
+      "environment_vars": [
+        "UPDATE={{ user `update` }}",
+        "INSTALL_DEV_PACKAGES={{ user `install_dev_packages` }}",
+        "INSTALL_VAGRANT_KEY={{ user `install_vagrant_key` }}",
+        "SSH_USERNAME={{ user `ssh_username` }}",
+        "SSH_PASSWORD={{ user `ssh_password` }}",
+        "http_proxy={{ user `http_proxy` }}",
+        "https_proxy={{ user `https_proxy` }}",
+        "ftp_proxy={{ user `ftp_proxy` }}",
+        "rsync_proxy={{ user `rsync_proxy` }}",
+        "no_proxy={{ user `no_proxy` }}"
+      ],
+      "execute_command": "echo '{{ user `ssh_password` }}' | {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
+      "type": "shell",
+      "scripts": [
+        "scripts/vagrant.sh",
+        "scripts/sshd.sh",
+        "scripts/packages.sh",
+        "scripts/cleanup.sh"
+      ]
+    },
+    {
+      "type": "shell",
+      "pause_before": "5s",
+      "inline": [
+        "echo '{{ user `deployer_username` }} ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/{{ user `deployer_username` }}"
+      ],
+      "override": {
+        "virtualbox-iso": {
+          "execute_command": "echo '{{ user `deployer_userpass` }}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+        }
+      }
+    },
+    {
+      "type": "shell",
+      "pause_before": "5s",
+      "expect_disconnect": true,
+      "execute_command": "echo '{{ user `deployer_userpass` }}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "echo rebooting...",
+        "sudo reboot",
+        "sleep 60"
+      ]
+    },
+    {
+      "only": [ "virtualbox-iso" ],
+      "type": "shell",
+      "pause_before": "5s",
+      "expect_disconnect": true,
+      "execute_command": "echo '{{ user `deployer_userpass` }}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "sed -i 's/\\(^GRUB_TIMEOUT=\\).*/\\GRUB_TIMEOUT=0/g' /etc/default/grub",
+        "sed -i 's/\\(^GRUB_CMDLINE_LINUX_DEFAULT=\\).*/\\GRUB_CMDLINE_LINUX_DEFAULT=\"consoleblank=0\"/g' /etc/default/grub",
+        "update-grub",
+        "sudo sed -ie 's/#*BLANK_TIME=30/BLANK_TIME=0/g' /etc/kbd/config",
+        "sudo sed -ie 's/#*POWERDOWN_TIME=30/POWERDOWN_TIME=0/g' /etc/kbd/config",
+        "sudo sed -ie 's/#*LEDS.*/LEDS+=num/g' /etc/kbd/config"
+      ]
+    },
+    {
+      "type": "shell",
+      "pause_before": "5s",
+      "script": "scripts/postinstall.sh"
+    },
+    {
+      "type": "shell",
+      "pause_before": "5s",
+      "expect_disconnect": true,
+      "execute_command": "echo '{{ user `deployer_userpass` }}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "echo rebooting...",
+        "sudo reboot",
+        "sleep 60"
+      ]
+    },
+    {
+      "only": [ "virtualbox-iso" ],
+      "type": "file",
+      "pause_before": "5s",
+      "source": "/home/vadbes46/.ssh/",
+      "destination": "/home/vagrant/.ssh"
+    },
+    {
+      "only": [ "virtualbox-iso" ],
+      "type": "shell",
+      "pause_before": "5s",
+      "execute_command": "echo '{{ user `deployer_userpass` }}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "chmod 600 /home/vagrant/.ssh/id_rsa",
+        "chmod 644 /home/vagrant/.ssh/id_rsa.pub",
+        "cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys",
+        "ssh-keyscan -p 7999 -H stash.paymantix.com 78.140.183.181 > /home/vagrant/.ssh/known_hosts"
+      ]
+    },
+    {
+      "type": "ansible-local",
+      "pause_before": "5s",
+      "playbook_file": "provision/site.yml",
+      "inventory_file": "provision/hosts",
+      "extra_arguments": [
+        "--limit=\"dev\" --extra-vars \"deployer_username=vagrant deployer_host=192.168.13.13\""
+      ],
+      "playbook_dir": "./provision"
+    },
+    {
+      "only": [ "virtualbox-iso" ],
+      "type": "file",
+      "pause_before": "5s",
+      "source": "files/",
+      "destination": "/home/vagrant"
+    },
+    {
+      "only": [ "virtualbox-iso" ],
+      "type": "shell",
+      "pause_before": "5s",
+      "execute_command": "echo '{{ user `deployer_userpass` }}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "mv /home/vagrant/limits.conf /etc/security/limits.conf",
+        "mv /home/vagrant/sysctl.conf /etc/sysctl.conf",
+        "chmod 644 /etc/security/limits.conf",
+        "chmod 644 /etc/sysctl.conf",
+        "chown root:root /etc/security/limits.conf",
+        "chown root:root /etc/sysctl.conf",
+        "sysctl -p",
+        "rm -rf /home/vagrant/.ssh/*",
+        "wget --no-check-certificate 'https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub' -O /home/vagrant/.ssh/authorized_keys",
+        "chmod 600 /home/vagrant/.ssh/authorized_keys",
+        "chown -R vagrant:vagrant /home/vagrant/.ssh"
+      ]
+    },
+    {
+      "type": "shell",
+      "pause_before": "5s",
+      "script": "scripts/space.sh"
+    },
+    {
+      "type": "shell",
+      "pause_before": "5s",
+      "expect_disconnect": true,
+      "execute_command": "echo '{{ user `deployer_userpass` }}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "inline": [
+        "echo rebooting...",
+        "sudo reboot",
+        "sleep 60"
+      ]
+    }
+  ],
+
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": true,
+      "compression_level": 9
+    }
+  ]
+}

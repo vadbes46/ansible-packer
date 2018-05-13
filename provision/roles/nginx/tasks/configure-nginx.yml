@@ -12,15 +12,16 @@
     path: "/etc/nginx/nginx.conf"
     regexp: "{{ item.reg }}"
     line: "{{ item.value }}"
-    backrefs: yes
+    insertafter: "{{ item.after }}"
+    backrefs: no
   with_items:
-    - { reg: '^user', value: 'user {{ nginx_fpm.user_group }};' }
-    - { reg: '^worker_processes', value: 'worker_processes auto;' }
-    - { reg: '*.worker_connections', value: '    worker_connections  2048;' }
-    - { reg: '.*sendfile', value: '    sendfile off;' }
-    - { reg: '.*tcp_nopush', value: '    tcp_nopush on;' }
-    - { reg: '.*tcp_nodelay', value: '    tcp_nodelay on;' }
-    - { reg: '.*gzip', value: '    gzip on;' }
+    - { reg: '^user', value: 'user {{ nginx_fpm.user_group }};', after: '' }
+    - { reg: '^worker_processes', value: 'worker_processes auto;', after: '' }
+    - { reg: '.*worker_connections', value: '    worker_connections  2048;', after: '' }
+    - { reg: '.*sendfile', value: '    sendfile off;', after: '' }
+    - { reg: '.*tcp_nopush', value: '    tcp_nopush on;', after: '' }
+    - { reg: '.*tcp_nodelay', value: '    tcp_nodelay on;', after: '.*tcp_nopush' }
+    - { reg: '.*gzip', value: '    gzip on;', after: '' }
   notify:
     - reload nginx
     - restart nginx

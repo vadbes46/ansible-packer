@@ -103,22 +103,23 @@ Vagrant.configure("2") do |config|
           # remove previous entry in known_hosts
           # check if user `www-data` exists
           # mount as `vagrant` if any problems
-          hostExists = system "ping_output=\"$(ping -c 1 -W 1 -q \"#{config.user.env.ip}\")\""
-          system "\"ssh-keygen -f '~/.ssh/known_hosts' -R \"#{config.user.env.ip}\"\" 2>/dev/null"
+          system "ret=$(ssh-keygen -f ~/.ssh/known_hosts -R \"#{config.user.env.ip}\") 2>/dev/null"
+          system "ret=$(ssh-keyscan -t rsa -H \"#{config.user.env.ip}\" 2>/dev/null >> ~/.ssh/known_hosts)"
+          hostExists = system "ret=$(ping -c 1 -W 1 -q \"#{config.user.env.ip}\")"
           if (hostExists)
-            # puts "\t host exists"
+          #   puts "\t host exists"
             wwwDataUser = system "ssh \"#{config.user.env.username}\"@\"#{config.user.env.ip}\" -i ~/.vagrant.d/insecure_private_key -t 'bash -ic \"id \"#{config.user.nginx_fpm.user_group}\";\" &>/dev/null' 2>/dev/null"
             if (wwwDataUser)
-              # puts "`www-data` exists"
+          #     puts "`www-data` exists"
             else
               owner = (owner == "www-data") ? "vagrant" : owner
               group = (group == "www-data") ? "vagrant" : group
-              # puts "`www-data` NOT exist"
+          #     puts "`www-data` NOT exist"
             end
           else
             owner = (owner == "www-data") ? "vagrant" : owner
             group = (group == "www-data") ? "vagrant" : group
-            # puts "\t host DOES NOT exist"
+          #   puts "\t host DOES NOT exist"
           end
 
           # debug 1

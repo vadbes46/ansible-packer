@@ -14,10 +14,10 @@ This is the template of `new ansible environment` for CentOS
 
 # ```Features```
 1. private VM ip is configured through .vagrantuser
-2. same for timezone, system time (influences on mysql, php)
-3. all synced folders defined in .vagrantuser, so never change Vagrantfile
-4. check if .vagrantuser exists and stop executing, also check if outdated
-5. 
+2. timezone (system time) is configurable (influences on mysql, php)
+3. all synced folders are defined in .vagrantuser, so never change Vagrantfile
+4. check `www-data` user exists, if not - mount as `vagrant`
+5. check .vagrantuser exists or is outdated, if not - stop executing
 6. 
 7. 
 8. ~~Box can be got from vagrant cloud as "rarek/centos7"~~

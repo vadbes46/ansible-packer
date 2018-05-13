@@ -5,7 +5,8 @@ Vagrant.require_version '>= 2.1.0'
 
 # install plugins
 need_restart = false
-required_plugins = %w(vagrant-vbguest nugrant vagrant-cachier vagrant-hostmanager vagrant-disksize vagrant-bindfs)
+required_plugins = %w(vagrant-vbguest nugrant vagrant-hostmanager)
+# required_plugins = %w(vagrant-vbguest nugrant vagrant-cachier vagrant-hostmanager vagrant-disksize vagrant-bindfs)
 required_plugins.each do |plugin|
   unless Vagrant.has_plugin? plugin
     system "vagrant plugin install #{plugin}"
@@ -42,7 +43,8 @@ Vagrant.configure("2") do |config|
   config.hostmanager.include_offline = false
 
   # config.vm.box = "rarek/centos7"
-  config.vm.box = "centos/7"
+  config.vm.box = "boxcentos"
+  # config.vm.box = "centos/7"
   # config.vm.box_version = "1.1.7"
   config.vm.box_check_update = true
   config.vbguest.auto_reboot = true
@@ -58,16 +60,15 @@ Vagrant.configure("2") do |config|
     v.customize ["modifyvm", :id, "--vrde", "off"]
     v.customize ["modifyvm", :id, "--audio", "none"]
     v.customize ["modifyvm", :id, "--paravirtprovider", "kvm"]
-    v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
-    v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     v.customize ["modifyvm", :id, "--nictype1", "virtio"]
+    # v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+    # v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     # v.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"] # symbolic links
   end
 
   config.vm.define "centos" do |node|
     node.vm.hostname = "ansible-centos"
     node.vm.network "private_network", nic_type: "virtio", ip: "#{config.user.env.ip}"
-    # node.vm.network "private_network", nic_type: "virtio", type: "dhcp"
 
     # register shared folders
     node.vm.synced_folder "./", "/vagrant", disabled: true # disable default mapping    
@@ -98,15 +99,34 @@ Vagrant.configure("2") do |config|
           group = (sync_folder.has_key?("group") && sync_folder["group"]) ? sync_folder["group"] : "vagrant"
           mount_options = mount_options ? mount_options : (sync_folder.has_key?("mount") && sync_folder["mount"] ? sync_folder["mount"] : [])
 
+          # check that host is available to reduce time
+          # remove previous entry in known_hosts
           # check if user `www-data` exists
-          # TODO
+          # mount as `vagrant` if any problems
+          hostExists = system "ping_output=\"$(ping -c 1 -W 1 -q \"#{config.user.env.ip}\")\""
+          system "\"ssh-keygen -f '~/.ssh/known_hosts' -R \"#{config.user.env.ip}\"\" 2>/dev/null"
+          if (hostExists)
+            # puts "\t host exists"
+            wwwDataUser = system "ssh \"#{config.user.env.username}\"@\"#{config.user.env.ip}\" -i ~/.vagrant.d/insecure_private_key -t 'bash -ic \"id \"#{config.user.nginx_fpm.user_group}\";\" &>/dev/null' 2>/dev/null"
+            if (wwwDataUser)
+              # puts "`www-data` exists"
+            else
+              owner = (owner == "www-data") ? "vagrant" : owner
+              group = (group == "www-data") ? "vagrant" : group
+              # puts "`www-data` NOT exist"
+            end
+          else
+            owner = (owner == "www-data") ? "vagrant" : owner
+            group = (group == "www-data") ? "vagrant" : group
+            # puts "\t host DOES NOT exist"
+          end
 
           # debug 1
-          config.vm.provision "shell", privileged: false, run: "always", inline: <<-SHELL
-            #!/usr/bin/env bash
-            echo "#{sync_folder.path} #{sync_type} #{owner}:#{group} #{mount_options}"
-            # echo #{options}
-          SHELL
+          # config.vm.provision "shell", privileged: false, run: "always", inline: <<-SHELL
+          #   #!/usr/bin/env bash
+          #   echo "#{sync_folder.path} #{sync_type} #{owner}:#{group} #{mount_options}"
+          #   # echo #{options}
+          # SHELL
 
           # For b/w compatibility keep separate 'mount_options', but merge with options
           # options = (sync_folder["mount"] || {}).merge({ mount: mount_options })
@@ -160,7 +180,7 @@ Vagrant.configure("2") do |config|
 
     node.vm.provision "file", source: config.user.id_rsa.deployer_id_rsa, destination: "/home/vagrant/.ssh/id_rsa"
     node.vm.provision "file", source: config.user.id_rsa.deployer_id_rsa_pub, destination: "/home/vagrant/.ssh/id_rsa.pub"
-    node.vm.provision "shell", privileged: false, inline: <<-SHELL
+    node.vm.provision "shell", privileged: true, inline: <<-SHELL
       #!/usr/bin/env bash
       if [ ! -d /etc/ansible/facts.d ]; then
         yum install epel-release ansible wget -y &>/dev/null
@@ -177,7 +197,7 @@ Vagrant.configure("2") do |config|
       if [ ! -e /vagrant ]; then
         ln -s /data/ansible-centos /vagrant;
       fi
-      sudo sed -i "s/.*host_key_checking.*/host_key_checking = False/g" /etc/ansible/ansible.cfg
+      sed -i "s/.*host_key_checking.*/host_key_checking = False/g" /etc/ansible/ansible.cfg
     SHELL
 
     if config.user.env.in_office then
@@ -195,7 +215,7 @@ Vagrant.configure("2") do |config|
       ansible.limit = limit
       ansible.compatibility_mode = "2.0"
       ansible.tags = tags
-      #ansible.verbose = "vvv"
+      # ansible.verbose = "vvv"
     end
 
     if config.user.env.in_office then

@@ -137,7 +137,7 @@
     line: "session     required      pam_limits.so"
 
 - name: get services owner by "{{ nginx_fpm.user_group }}"
-  shell: "systemctl list-unit-files | grep -E 'php-fpm|nginx'"
+  shell: "systemctl list-unit-files | grep -oE 'php-fpm.service|nginx.service'"
   register: www_services
   failed_when: www_services.rc == 2
 
@@ -146,8 +146,7 @@
     name: "{{ item }}"
     state: stopped
   with_items:
-    - php-fpm
-    - nginx
+    - "{{ www_services.stdout }}"
   when: www_services.rc == 0
 
 - name: add group "{{ nginx_fpm.user_group }}"

@@ -67,12 +67,12 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "centos" do |node|
-    node.vm.hostname = "ansible-centos"
+    node.vm.hostname = "ansible-packer"
     node.vm.network "private_network", nic_type: "virtio", ip: "#{config.user.env.ip}"
 
     # register shared folders
     node.vm.synced_folder "./", "/vagrant", disabled: true # disable default mapping    
-    node.vm.synced_folder "./", "#{config.user.path.root_dir}/ansible-centos", create: true
+    node.vm.synced_folder "./", "#{config.user.path.root_dir}/ansible-packer", create: true
     # node.vm.synced_folder ".", "/home/bitrix/www", owner: "bitrix", group: "bitrix", type: "smb", mount_options: ["mfsymlinks,dir_mode=0755,file_mode=0755"]
     if config.user.path.include? "sync_folder"
       config.user.path["sync_folder"].each do |sync_folder|
@@ -196,7 +196,7 @@ Vagrant.configure("2") do |config|
       ssh-keyscan -p 7999 -H stash.paymantix.com 78.140.183.181 > /home/vagrant/.ssh/known_hosts 2>/dev/null
       chown -R vagrant:vagrant /home/vagrant/.ssh
       if [ ! -e /vagrant ]; then
-        ln -s /data/ansible-centos /vagrant;
+        ln -s /data/ansible-packer /vagrant;
       fi
       sed -i "s/.*host_key_checking.*/host_key_checking = False/g" /etc/ansible/ansible.cfg
     SHELL
@@ -211,8 +211,8 @@ Vagrant.configure("2") do |config|
 
     provisioner = :ansible_local
     node.vm.provision provisioner do |ansible|
-      ansible.inventory_path = "/data/ansible-centos/provision/hosts"
-      ansible.playbook = "/data/ansible-centos/provision/site.yml"
+      ansible.inventory_path = "/data/ansible-packer/provision/hosts"
+      ansible.playbook = "/data/ansible-packer/provision/site.yml"
       ansible.limit = limit
       ansible.compatibility_mode = "2.0"
       ansible.tags = tags

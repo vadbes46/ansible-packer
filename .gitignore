@@ -10,6 +10,9 @@
 /packer/output-virtualbox-iso/
 *.iso
 *.box
+/tools/tracer/*
+!/tools/tracer/start_standalone.sh
+
 
 /provision/roles/mysql/
 /provision/roles/app/

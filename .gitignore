@@ -7,11 +7,10 @@
 /.vagrantuser
 /.idea
 *.retry
-/packer/output-virtualbox-iso/
 *.iso
 *.box
-/tools/tracer/*
-!/tools/tracer/start_standalone.sh
+/packer/output-virtualbox-iso/
+/tools/tracer/bin
 
 
 /provision/roles/mysql/

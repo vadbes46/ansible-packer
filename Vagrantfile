@@ -193,10 +193,10 @@ Vagrant.configure("2") do |config|
       chmod 600 /home/vagrant/.ssh/id_rsa
       chmod 644 /home/vagrant/.ssh/id_rsa.pub
       cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
-      ssh-keyscan -p 7999 -H stash.paymantix.com 78.140.183.181 > /home/vagrant/.ssh/known_hosts 2>/dev/null
+      ssh-keyscan -p 7999 -H stash.paymantix.com 78.140.183.181 206.54.161.161 > /home/vagrant/.ssh/known_hosts 2>/dev/null
       chown -R vagrant:vagrant /home/vagrant/.ssh
       if [ ! -e /vagrant ]; then
-        ln -s /data/ansible-packer /vagrant;
+        ln -s #{config.user.path.root_dir}/ansible-packer /vagrant;
       fi
       sed -i "s/.*host_key_checking.*/host_key_checking = False/g" /etc/ansible/ansible.cfg
     SHELL
@@ -211,8 +211,8 @@ Vagrant.configure("2") do |config|
 
     provisioner = :ansible_local
     node.vm.provision provisioner do |ansible|
-      ansible.inventory_path = "/data/ansible-packer/provision/hosts"
-      ansible.playbook = "/data/ansible-packer/provision/site.yml"
+      ansible.inventory_path = "#{config.user.path.root_dir}/ansible-packer/provision/hosts"
+      ansible.playbook = "#{config.user.path.root_dir}/ansible-packer/provision/site.yml"
       ansible.limit = limit
       ansible.compatibility_mode = "2.0"
       ansible.tags = tags

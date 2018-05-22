@@ -1,12 +1,23 @@
 ---
-- stat: path=/etc/php.ini
-  register: phpfpm
-
-- stat: path=/etc/php.ini
-  register: phpcli
-
-- include: php-fpm.yml
-  when: phpfpm.stat.exists
-
-- include: php-cli.yml
-  when: phpcli.stat.exists
+- name: configure php-fpm
+  lineinfile:
+    path: "{{ item.path }}"
+    regexp: "{{ item.reg }}"
+    line: "{{ item.value }}"
+    backrefs: no
+  with_items:
+    - { path: '/etc/php-fpm.d/www.conf', reg: '^;?user',                    value: 'user = {{ nginx_fpm.user_group }}' }
+    - { path: '/etc/php-fpm.d/www.conf', reg: '^;?group',                   value: 'group = {{ nginx_fpm.user_group }}' }
+    - { path: '/etc/php-fpm.d/www.conf', reg: '^;?listen.owner',            value: 'listen.owner = {{ nginx_fpm.user_group }}' }
+    - { path: '/etc/php-fpm.d/www.conf', reg: '^;?listen.group',            value: 'listen.group = {{ nginx_fpm.user_group }}' }
+    - { path: '/etc/php-fpm.d/www.conf', reg: '^;?listen.mode',             value: 'listen.mode = 0660' }
+    - { path: '/etc/php.ini',            reg: '^;?date.timezone',           value: 'date.timezone = {{ env.timezone }}' }
+    # - { path: '/etc/php.ini',            reg: '^#?opcache.enable=',         value: 'opcache.enable=1' }
+    # - { path: '/etc/php.ini',            reg: '^;?opcache.revalidate_freq', value: 'opcache.revalidate_freq=0' }
+    # - { path: '/etc/php.ini',            reg: '^;?session.cookie_httponly', value: 'session.cookie_httponly = 1' }
+    # - { path: '/etc/php.ini',            reg: '^;?session.use_strict_mode', value: 'session.use_strict_mode = 1' }
+    - { path: '/etc/php.ini',            reg: '^;?disable_functions',       value: 'disable_functions = shell_exec,system,popen' }
+    - { path: '/etc/php.ini',            reg: '^;?track_errors',            value: 'track_errors = Off' }
+    - { path: '/etc/php-fpm.conf',       reg: '^;?log_level',               value: 'log_level = error' }
+  notify:
+    - restart php-fpm

@@ -1,0 +1,13 @@
+---
+- name: get php service
+  shell: "systemctl list-unit-files | grep -oE 'php[0-7|-]+.*.service'"
+  register: php_service
+  failed_when: php_service.rc == 2
+
+- name: restart {{ php_service.stdout_lines }}
+  service:
+    name: "{{ php_service.stdout }}"
+    state: restarted
+  with_items:
+    - "{{ php_service.stdout_lines }}"
+  when: php_service.rc == 0

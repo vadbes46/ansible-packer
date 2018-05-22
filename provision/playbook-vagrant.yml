@@ -15,6 +15,7 @@
     # - vertica
     # - app
     # - plus
+    - post-task
   tags:
     - vagrant_dev
 
@@ -34,5 +35,6 @@
     # - vertica
     # - app
     # - plus
+    - post-task
   tags:
     - vagrant_office

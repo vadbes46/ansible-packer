@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-server-start.sh -daemon /opt/kafka/kafka-cluster/conf/server-0.properties & sleep 1
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-server-start.sh -daemon /opt/kafka/kafka-cluster/conf/server-1.properties & sleep 1
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-server-start.sh -daemon /opt/kafka/kafka-cluster/conf/server-2.properties & sleep 1

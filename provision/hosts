@@ -1,5 +1,5 @@
 [vagrant-dev-group]
-dev ansible_host={{env.ip}} ansible_user={{env.username}}
+dev ansible_host={{env.ip}} ansible_user={{env.username}} ansible_ssh_pass={{env.password}} ansible_connection=local
 
 [vagrant-office-group]
-office ansible_host={{env.ip}} ansible_user={{env.username}}
+office ansible_host={{env.ip}} ansible_user={{env.username}} ansible_ssh_pass={{env.password}} ansible_connection=local

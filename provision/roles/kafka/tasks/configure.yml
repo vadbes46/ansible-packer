@@ -1,0 +1,91 @@
+---
+- name: create kafka-cluster conf directory
+  file:
+    path: /opt/kafka/kafka-cluster
+    state: "{{ item }}"
+    owner: "{{ env.username }}"
+    group: "{{ env.username }}"
+  with_items:
+    - absent
+    - directory
+
+- name: upload kafka-cluster configs
+  copy:
+    src: ../files/kafka/
+    dest: /opt/kafka/kafka-cluster/
+    owner: "{{ env.username }}"
+    group: "{{ env.username }}"
+
+- name: install helpers
+  template:
+    src: "kafka.{{ item }}.sh.j2"
+    dest: "/opt/kafka/kafka-cluster/{{ item }}.sh"
+    owner: "{{ env.username }}"
+    group: "{{ env.username }}"
+    mode: 0755
+  with_items:
+   - install_topics
+   - start_kafka_cluster
+   - start_zookeeper_cluster
+   - stop_kafka_cluster
+   - stop_zookeeper_cluster
+   - uninstall_topics
+
+- name: add zookeeper systemd script
+  template:
+    src: service.zookeeper.systemd.j2
+    dest: /usr/lib/systemd/system/zookeeper.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: add kafka systemd script
+  template:
+    src: service.kafka.systemd.j2
+    dest: /usr/lib/systemd/system/kafka.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: reload systemd daemon
+  shell: systemctl daemon-reload
+
+- name: ensure zookeeper is started
+  service:
+    name: zookeeper
+    state: started
+
+- wait_for:
+    port: 2181
+    delay: 5
+    timeout: 15
+
+- name: ensure kafka is started
+  service:
+    name: kafka
+    state: started
+
+- wait_for:
+    port: 9092
+    delay: 5
+    timeout: 15
+
+- name: install topics
+  shell: /opt/kafka/kafka-cluster/install_topics.sh
+  failed_when: false
+
+- name: enable zookeeper service
+  service:
+    name: zookeeper
+    enabled: yes
+  notify:
+    - restart zookeeper
+  changed_when: true
+
+- name: enable kafka service
+  service:
+    name: kafka
+    enabled: yes
+  notify:
+    - restart kafka
+  changed_when: true

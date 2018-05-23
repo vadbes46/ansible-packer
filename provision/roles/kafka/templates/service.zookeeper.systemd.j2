@@ -1,0 +1,23 @@
+[Unit]
+Description=Apache Zookeeper server 
+Documentation=http://zookeeper.apache.org
+Requires=network.target remote-fs.target
+After=network.target remote-fs.target
+Before=kafka.service
+
+[Service]
+Type=simple
+Environment=JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk
+ExecStart=/bin/sh -c '/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/zookeeper-server-start.sh /opt/kafka/kafka-cluster/conf/zookeeper-single.properties 2>&1 > {{ path.root_dir }}/logs/service_zookeeper.log'
+ExecStop=/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/zookeeper-server-stop.sh
+
+#ExecReload=/bin/kill -HUP $MAINPID
+#User=vagrant
+#Group=vagrant
+#WorkingDirectory=/opt/kafka/kafka-cluster/data/zookeeper/
+#SuccessExitStatus=143
+#Restart=on-abort
+#PIDFile=/var/run/zookeeper.pid
+
+[Install]
+WantedBy=multi-user.target

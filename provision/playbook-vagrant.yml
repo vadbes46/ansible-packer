@@ -10,14 +10,37 @@
     - pre-task
     - nginx
     - php
+    - kafka
     # - mysql
     # - composer
     # - vertica
     # - app
     # - plus
     - post-task
+###
+### from ubuntu
+###
+    # - pre-task
+    # - aliases
+    # - mysql-db
+    # - nginx
+    # - db
+    # - db-terminal
+    # - db-collector
+    # - admin
+    # - ecotests
+    # - ecogatetools
+    # - pmx
+    # - plus
+    # - ecofaker
+    # - terminal
+    # - cron
+    # - kafka
+    # - supervisor
+    # - post-task
   tags:
     - vagrant_dev
+    # - localhost_dev_vagrant
 
 # for Vagrant `office`
 - hosts: office
@@ -30,6 +53,7 @@
     - pre-task
     - nginx
     - php
+    - kafka
     # - mysql
     # - composer
     # - vertica

@@ -4,6 +4,7 @@ Table of Contents
 - [```Installed Software```](#installed-software)
     - [```PHP 7.2.5 (remi-php72 repo) with extensions:```](#php-725-remi-php72-repo-with-extensions)
     - [```nginx 1.14.0```](#nginx-1140)
+    - [```kafka 1.1.0```](#kafka-110)
     - [```Percona 5.7```](#percona-57)
     - [```composer```](#composer)
 - [```Vagrant Base Box```](#vagrant-base-box)
@@ -22,7 +23,7 @@ It has been grown from Ubuntu environment with all enhancements continuously app
 4. check `www-data` user exists, if not - mount as `vagrant`
 5. check .vagrantuser exists and not outdated, else - stop executing
 6. 
-7. 
+7. all services are disabled by default in the box
 8. ~~Box can be got from vagrant cloud as "rarek/centos7"~~
 
 # ```Installed Software```
@@ -48,6 +49,9 @@ It has been grown from Ubuntu environment with all enhancements continuously app
 FPM is configured to listen ports instead of sockets
 
 ## ```nginx 1.14.0```
+
+## ```kafka 1.1.0```
+kafka and zookeeper are installed as systemd services
 
 ## ```Percona 5.7```
     root / 12345678

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/zookeeper-server-start.sh -daemon /opt/kafka/kafka-cluster/conf/zookeeper-1.properties & sleep 1
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/zookeeper-server-start.sh -daemon /opt/kafka/kafka-cluster/conf/zookeeper-2.properties & sleep 1
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/zookeeper-server-start.sh -daemon /opt/kafka/kafka-cluster/conf/zookeeper-3.properties & sleep 1

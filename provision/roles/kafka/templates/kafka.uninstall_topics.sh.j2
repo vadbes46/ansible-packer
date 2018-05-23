@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic parser_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic br_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic blogic_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic fraudstop_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic mpi_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic tokenizer_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic ps_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic psnonecard_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic billing_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic eml_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic callback_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic failhandler_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic changelog_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --delete --zookeeper localhost:2181 --topic replication_0

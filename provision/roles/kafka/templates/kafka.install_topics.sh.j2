@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic parser_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic br_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic blogic_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic fraudstop_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic mpi_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic tokenizer_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic ps_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic psnonecard_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic billing_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 3 --topic eml_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic callback_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 3 --topic failhandler_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic changelog_0
+/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic replication_0

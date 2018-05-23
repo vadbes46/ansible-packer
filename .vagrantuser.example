@@ -3,6 +3,7 @@
 # ------------------------------------------------------------------------------------------------------------------------------------
 env:
   username: vagrant                               # who is provisioning
+  password: vagrant
   ip: "192.168.15.15"                             # private network ip
   memory: 4096                                    # 6144 or 8096 for async plus
   cpus: 4                                         # Use `2` for i5 and `4` for i7

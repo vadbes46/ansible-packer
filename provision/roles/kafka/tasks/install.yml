@@ -1,0 +1,41 @@
+---
+- name: install java jdk
+  yum:
+    name: java-1.8.0-openjdk
+    state: present
+
+- name: check if kafka is installed
+  stat:
+    path: "/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}"
+  register: kafkadir
+
+- name: create kafka directory
+  file:
+    path: /opt/kafka
+    state: "{{ item }}"
+    owner: "{{ env.username }}"
+    group: "{{ env.username }}"
+  with_items:
+    - directory
+  when: kafkadir.stat.isdir is not defined or not kafkadir.stat.isdir
+
+- name: get kafka sources
+  get_url:
+    url: "http://mirror.linux-ia64.org/apache/kafka/{{ kafka_version }}/kafka_{{ scala_version }}-{{ kafka_version }}.tgz"
+    dest: "/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}.tgz"
+    timeout: 360
+  when: kafkadir.stat.isdir is not defined or not kafkadir.stat.isdir
+
+- name: untar kafka sources
+  unarchive:
+    src: "/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}.tgz"
+    dest: /opt/kafka
+    copy: no
+    owner: "{{ env.username }}"
+    group: "{{ env.username }}"
+  when: kafkadir.stat.isdir is not defined or not kafkadir.stat.isdir
+
+- name: cleanup
+  file:
+    path: "/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}.tgz"
+    state: absent

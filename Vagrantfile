@@ -21,7 +21,7 @@ if File.exist? vagrantUserDir + "/.vagrantuser" then
   vagrantuserDate = File.mtime(vagrantUserDir + "/.vagrantuser")
   vagrantuserExampleDate = File.mtime(vagrantUserDir + "/.vagrantuser.example")
   if (vagrantuserDate.to_f < vagrantuserExampleDate.to_f)
-    puts "\t" + "\e[41m.vagrantuser\e[0m" + " file is " + "\e[41mOUTDATED\e[0m" + "\n\t" + "please recreate"
+    puts "\t" + "\e[41m.vagrantuser\e[0m" + " file is " + "\e[41mOUTDATED\e[0m" + "\n\t" + "---> please recreate <---"
     exit 0
   end
 else

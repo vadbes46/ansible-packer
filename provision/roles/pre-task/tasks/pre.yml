@@ -18,7 +18,7 @@
 #     gpgkey: https://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
 #     baseurl: https://download.fedoraproject.org/pub/epel/7/x86_64/
 
-# - name: update apt cache (yum check-update)
+# - name: update apt cache (yum check-update/yum update)
 #   yum:
 #     name: "*"
 #     state: latest
@@ -66,6 +66,11 @@
     # - lsb-core
     # - apt-transport-https
     # - nfs-common
+
+#- name: upgrade pip
+#  shell: "pip install --upgrade pip"
+#  become: yes
+#  become_user: "{{ deployer_username }}"
 
 # - name: add nodejs official apt repository and key
 #   shell: "wget -qO- https://deb.nodesource.com/setup_8.x | bash - warn=no"
@@ -163,7 +168,7 @@
     create_home: no
     system: yes
 
-- name: add deployer_user to "{{ nginx_fpm.user_group }}"
+- name: add "{{ env.username }}" to "{{ nginx_fpm.user_group }}"
   user:
     name: "{{ env.username }}"
     append: yes
@@ -177,4 +182,3 @@
 - name: disabling selinux
   selinux:
     state: disabled
-

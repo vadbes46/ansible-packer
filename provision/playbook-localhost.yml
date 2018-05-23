@@ -10,6 +10,7 @@
     - pre-task
     - nginx
     - php
+    - kafka
     # - mysql
     # - composer
     # - vertica
@@ -30,6 +31,7 @@
     - pre-task
     - nginx
     - php
+    - kafka
     # - mysql
     # - composer
     # - vertica
@@ -50,6 +52,7 @@
     - pre-task
     - nginx
     - php
+    - kafka
     # - mysql
     # - composer
     # - vertica

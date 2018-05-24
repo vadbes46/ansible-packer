@@ -21,5 +21,16 @@ php_packages:
 php_extension_conf_paths:
   - /etc/php-fpm.d
   - /etc/php.d
-
-ext_workspace: "/home/vagrant"
+# php_extension_mods_path: "/etc/php/7.0/mods-available"
+ext_workspace: "/home/{{ env.username }}"
+ext_module_path: "/usr/lib64/php/modules"
+# ext_phpamqp_version: "1.9.3"
+# ext_librdkafka_version: "v0.11.3"
+# ext_rdkafka_version: "3.0.5"
+# ext_rdkafka_config_filename: "20-rdkafka.ini"
+# ext_amqp_config_filename: "20-amqp.ini"
+# ext_pinba_config_filename: "20-pinba.ini"
+# ext_blitz_version: "0.10.4-PHP7"
+# ext_blitz_config_filename: "20-blitz.ini"
+# ext_redis_config_filename: "20-redis.ini"
+# ext_xhprof_config_filename: "20-xhprof.ini"

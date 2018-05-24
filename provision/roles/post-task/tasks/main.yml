@@ -1,3 +1,2 @@
 ---
-- include_tasks: tracer.yml
 - include_tasks: php-restart.yml

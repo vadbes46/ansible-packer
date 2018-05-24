@@ -66,6 +66,28 @@
     # - lsb-core
     # - apt-transport-https
     # - nfs-common
+    - centos-release-scl
+
+- name: install gcc 5.3.1
+  yum:
+    update_cache: yes
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+  with_items:
+    - { name: 'devtoolset-4-gcc', state: 'present' }
+    - { name: 'devtoolset-4-gcc-c++', state: 'present' }
+
+- name: configure gcc 5.3.1
+  alternatives:
+    name: "{{ item.name }}"
+    link: "{{ item.link }}"
+    path: "{{ item.path }}"
+    priority: "{{ item.priority }}"
+  with_items:
+    - { name: 'gcc', link: '/usr/bin/gcc', path: '/opt/rh/devtoolset-4/root/usr/bin/gcc', priority: '50' }
+    - { name: 'g++', link: '/usr/bin/g++', path: '/opt/rh/devtoolset-4/root/usr/bin/g++', priority: '50' }
+    - { name: 'cpp', link: '/usr/bin/cpp', path: '/opt/rh/devtoolset-4/root/usr/bin/cpp', priority: '50' }
+    - { name: 'c++', link: '/usr/bin/c++', path: '/opt/rh/devtoolset-4/root/usr/bin/c++', priority: '50' }
 
 #- name: upgrade pip
 #  shell: "pip install --upgrade pip"

@@ -6,6 +6,7 @@ Table of Contents
     - [```nginx 1.14.0```](#nginx-1140)
     - [```kafka 1.1.0```](#kafka-110)
     - [```Percona 5.7```](#percona-57)
+    - [```gcc 5.3.1```](#gcc-531)
     - [```composer```](#composer)
 - [```Vagrant Base Box```](#vagrant-base-box)
 - [```TODO```](#todo)
@@ -51,10 +52,13 @@ FPM is configured to listen ports instead of sockets
 ## ```nginx 1.14.0```
 
 ## ```kafka 1.1.0```
-kafka and zookeeper are installed as systemd services
+    kafka and zookeeper are installed as systemd services
 
 ## ```Percona 5.7```
     root / 12345678
+
+## ```gcc 5.3.1```
+    installed from devtoolset-4 and configured with update-alternatives
 
 ## ```composer```
 

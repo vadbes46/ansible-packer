@@ -1,0 +1,9 @@
+# platform: dev
+# platform_id: 250
+# 
+# daemon_username: nginx
+# 
+# mysql_root_password: 12345678
+# mysql_host: 127.0.0.1
+# mysql_port: 3306
+# vagrant_postfix: ""

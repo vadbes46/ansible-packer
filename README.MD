@@ -18,14 +18,20 @@ This is the template of `new ansible environment` for CentOS.
 It has been grown from Ubuntu environment with all enhancements continuously appearing during 9 months.
 
 # ```Features```
+```.vagrantuser```
 1. private VM ip is configured through .vagrantuser
 2. timezone (system time) is configurable (influences on mysql, php)
 3. all synced folders are defined in .vagrantuser, so never change Vagrantfile
-4. check `www-data` user exists, if not - mount as `vagrant`
-5. check .vagrantuser exists and not outdated, else - stop executing
-6. 
-7. all services are disabled by default in the box
-8. ~~Box can be got from vagrant cloud as "rarek/centos7"~~
+4. vault password should exist in .vagrantuser to execute private ansible rules, obtain it from IT, if empty or incorrect - skip those rules
+
+```Vagrantfile```
+1. check `www-data` user exists, if not - mount as `vagrant`
+2. check .vagrantuser exists and not outdated, else - stop executing
+
+```Box```
+1. all services are disabled by default in the box
+2. 
+3. ~~Box can be got from vagrant cloud as "rarek/centos7"~~
 
 # ```Installed Software```
 ## ```PHP 7.2.5 (remi-php72 repo) with extensions:```

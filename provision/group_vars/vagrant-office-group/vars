@@ -1,0 +1,4 @@
+dns_server_ip: "{{ vault_dns_server_ip }}"
+dns_key_name: "{{ vault_dns_key_name }}"
+dns_key_secret: "{{ vault_dns_key_secret }}"
+rc_local: "{{ vault_rc_local }}"

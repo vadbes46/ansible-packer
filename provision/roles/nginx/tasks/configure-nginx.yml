@@ -39,20 +39,18 @@
 #     win-utf
 #     modules -> ../../usr/lib64/nginx/modules
 
-
-
-# - name: put cert files
-#   copy:
-#     src: "cert/{{ item }}"
-#     dest: "/etc/nginx/cert/"
-#     owner: root
-#     group: root
-#     mode: 0644
-#   with_items:
-#     - "ecpdss.net.key"
-#     - "ecpdss.net.pem"
-
-
+- name: put cert files
+  copy:
+    src: "cert/{{ item }}"
+    dest: "/etc/nginx/cert/"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - "ecpdss.net.key"
+    - "ecpdss.net.pem"
+  ignore_errors: true
+  when: env.vault_pass != ""
 
 # - name: configure virtual hosts CentOS
 #   template:
@@ -137,3 +135,12 @@
 #     - restart nginx
 #   when: local_mock
 #   when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+# - name: ensure nginx is enabled and started
+#   service:
+#     name: nginx
+#     state: started
+#     enabled: yes
+
+# - name: ensure nginx is enabled and started
+#   shell: "sudo systemctl enable nginx warn=no"

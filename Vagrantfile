@@ -71,7 +71,7 @@ Vagrant.configure("2") do |config|
     node.vm.network "private_network", nic_type: "virtio", ip: "#{config.user.env.ip}"
 
     # register shared folders
-    node.vm.synced_folder "./", "/vagrant", disabled: true # disable default mapping    
+    node.vm.synced_folder "./", "/vagrant", disabled: true # disable default mapping
     node.vm.synced_folder "./", "#{config.user.path.root_dir}/ansible-packer", create: true
     # node.vm.synced_folder ".", "/home/bitrix/www", owner: "bitrix", group: "bitrix", type: "smb", mount_options: ["mfsymlinks,dir_mode=0755,file_mode=0755"]
     if config.user.path.include? "sync_folder"
@@ -193,12 +193,17 @@ Vagrant.configure("2") do |config|
       chmod 600 /home/vagrant/.ssh/id_rsa
       chmod 644 /home/vagrant/.ssh/id_rsa.pub
       cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
-      ssh-keyscan -p 7999 -H stash.paymantix.com 78.140.183.181 206.54.161.161 > /home/vagrant/.ssh/known_hosts 2>/dev/null
+      ssh-keyscan -p 7999 -H stash.paymantix.com > /home/vagrant/.ssh/known_hosts 2>/dev/null
       chown -R vagrant:vagrant /home/vagrant/.ssh
       if [ ! -e /vagrant ]; then
         ln -s #{config.user.path.root_dir}/ansible-packer /vagrant;
       fi
       sed -i "s/.*host_key_checking.*/host_key_checking = False/g" /etc/ansible/ansible.cfg
+    SHELL
+
+    node.vm.provision "shell", inline: <<-SHELL
+      #!/bin/bash
+      echo #{config.user.env.vault_pass} > /home/vagrant/vault_pass
     SHELL
 
     if config.user.env.in_office then
@@ -216,7 +221,11 @@ Vagrant.configure("2") do |config|
       ansible.limit = limit
       ansible.compatibility_mode = "2.0"
       ansible.tags = tags
+      if config.user.env.vault_pass != "" then
+        ansible.vault_password_file = "/home/vagrant/vault_pass"
+      end
       # ansible.verbose = "vvv"
+      # ansible.raw_arguments = ["--connection=paramiko"]
     end
 
     if config.user.env.in_office then

@@ -1,5 +1,5 @@
 ---
-composer_path: /usr/bin/composer
+composer_path: /usr/local/bin/composer
 composer_home_path: '~/.config/composer'
 composer_global_packages:
  - { name: fxp/composer-asset-plugin}

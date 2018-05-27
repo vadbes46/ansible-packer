@@ -25,7 +25,6 @@
 - name: composer config
   shell: "composer config --global {{ item }}"
   with_items:
-    - "vendor-dir {{ composer_home_path }}/vendor"
     - "discard-changes true"
     - "process-timeout 600"
     - "preferred-install dist"

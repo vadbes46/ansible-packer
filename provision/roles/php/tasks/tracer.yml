@@ -17,11 +17,12 @@
     chdir: "{{ item.chdir }}"
     creates: "{{ ext_module_path }}/jaeger-client.so"
   with_items:
-    - { command: 'make clean', chdir: '{{ ext_workspace }}/jaeger-client-php-ext/PHP-CPP' } 
-    - { command: 'scl enable devtoolset-4 "bash -c make"', chdir: '{{ ext_workspace }}/jaeger-client-php-ext/PHP-CPP' } 
-    - { command: 'make install', chdir: '{{ ext_workspace }}/jaeger-client-php-ext/PHP-CPP' } 
-    - { command: 'make clean', chdir: '{{ ext_workspace }}/jaeger-client-php-ext' } 
-    - { command: 'make install', chdir: '{{ ext_workspace }}/jaeger-client-php-ext' } 
+    - { command: 'sed -i "s/  INSTALL_PREFIX.*/  INSTALL_PREFIX=\/usr\/local/" Makefile', chdir: '{{ ext_workspace }}/jaeger-client-php-ext/PHP-CPP' }
+    - { command: 'make clean', chdir: '{{ ext_workspace }}/jaeger-client-php-ext/PHP-CPP' }
+    - { command: 'scl enable devtoolset-4 "bash -c make"', chdir: '{{ ext_workspace }}/jaeger-client-php-ext/PHP-CPP' }
+    - { command: 'make install', chdir: '{{ ext_workspace }}/jaeger-client-php-ext/PHP-CPP' }
+    - { command: 'make clean', chdir: '{{ ext_workspace }}/jaeger-client-php-ext' }
+    - { command: 'scl enable devtoolset-4 "bash -c make install"', chdir: '{{ ext_workspace }}/jaeger-client-php-ext' }
   notify:
     - restart php-fpm
 
@@ -30,10 +31,10 @@
     path: "{{ ext_workspace }}/jaeger-client-php-ext"
     state: absent
 
-# - name: remove prev jaeger binaries and UI
-#   file:
-#     path: "{{ path.root_dir }}/ansible-packer/tools/tracer/bin"
-#     state: absent
+- name: remove prev jaeger binaries and UI
+  file:
+    path: "{{ path.root_dir }}/ansible-packer/tools/tracer/bin"
+    state: absent
 
 - name: get jaeger binaries and UI
   git:

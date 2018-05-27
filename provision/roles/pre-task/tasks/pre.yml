@@ -45,7 +45,7 @@
     - openssl-devel
     - libsigc++20-devel
     - nano
-    - sendmail
+    # - sendmail
     - tmux
     - cmake
     - vim
@@ -204,3 +204,12 @@
 - name: disabling selinux
   selinux:
     state: disabled
+
+- name: add /usr/local/lib for ldconfig
+  copy:
+    src: usr-local-lib.conf
+    dest: /etc/ld.so.conf.d/
+    directory_mode: 0755
+
+- name: invoke ldconfig
+  shell: "ldconfig"

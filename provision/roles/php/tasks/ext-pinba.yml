@@ -1,0 +1,34 @@
+---
+- name: clone pinba_extension
+  git:
+    repo: https://github.com/tony2001/pinba_extension.git
+    dest: "{{ ext_workspace }}/pinba_extension"
+    update: no
+
+- name: build pinba_extension
+  shell: "{{ item }}"
+  args:
+    creates: "{{ ext_module_path }}/pinba.so"
+    chdir: "{{ ext_workspace }}/pinba_extension"
+  with_items:
+    - phpize
+    - ./configure --enable-pinba
+    - make install
+
+- name: copy pinba ini into main extension config folders
+  copy:
+    src: pinba.ini
+    dest: "{{ item }}/20-pinba.ini"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ php_extension_conf_paths }}"
+  notify:
+    - restart php-fpm
+
+- name: cleanup
+  file:
+    path: "{{ ext_workspace }}/{{ item }}"
+    state: absent
+  with_items:
+    - "pinba_extension"

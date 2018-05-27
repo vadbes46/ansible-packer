@@ -1,0 +1,42 @@
+---
+- name: download phpredis
+  get_url:
+    url: "https://github.com/phpredis/phpredis/archive/{{ ext_phpredis_version }}.tar.gz"
+    dest: "{{ ext_workspace }}/phpredis-{{ ext_phpredis_version }}.tar.gz"
+    timeout: 360
+
+- name: untar phpredis
+  unarchive:
+    src: "{{ ext_workspace }}/phpredis-{{ ext_phpredis_version }}.tar.gz"
+    dest: "{{ ext_workspace }}"
+    copy: no
+
+- name: build phpredis
+  shell: "{{ item }}"
+  args:
+    creates: "{{ ext_module_path }}/phpredis.so"
+    chdir: "{{ ext_workspace }}/phpredis-{{ ext_phpredis_version }}"
+  with_items:
+    - phpize
+    - ./configure
+    - make
+    - make install
+
+- name: copy redis ini into main extension config folders
+  copy:
+    src: redis.ini
+    dest: "{{ item }}/20-redis.ini"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ php_extension_conf_paths }}"
+  notify:
+    - restart php-fpm
+
+- name: cleanup
+  file:
+    path: "{{ ext_workspace }}/{{ item }}"
+    state: absent
+  with_items:
+    - "phpredis-{{ ext_phpredis_version }}.tar.gz"
+    - "phpredis-{{ ext_phpredis_version }}"

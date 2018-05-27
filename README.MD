@@ -34,25 +34,36 @@ It has been grown from Ubuntu environment with all enhancements continuously app
 3. ~~Box can be got from vagrant cloud as "rarek/centos7"~~
 
 # ```Installed Software```
-## ```PHP 7.2.5 (remi-php72 repo) with extensions:```
+## ```PHP 7.2.6 (remi-php72 repo)```
+### ```Packages/Modules:```
 - php-bcmath
 - php-cli
 - php-common
 - php-devel
 - php-fpm
 - php-gd
-- php-intl
-- php-json
 - php-mbstring
 - php-mysqlnd
 - php-odbc
 - php-pdo
-- php-pecl-gearman
-- php-pecl-memcached
-- php-pecl-zip
+- php-process
 - php-soap
 - php-xml
-
+### ```Extensions:```
+- php-intl
+- php-json
+- php-pecl-geoip
+- php-pecl-memcached
+- php-pecl-zip
+### ```Extensions compiled:```
+- librdkafka v0.11.4 + php-rdkafka 3.0.5
+- jaeger-client 1.1
+- phalcon 3.3.2
+- pinba 1.1.2
+- blitz 0.10.4-PHP7
+- phpredis 4.0.2
+- rabbitmq-c v0.9.0 + php-amqp 1.9.3
+### ```Configuration:```
 FPM is configured to listen ports instead of sockets
 
 ## ```nginx 1.14.0```
@@ -95,3 +106,5 @@ After a box has been compiled it can be added with the following command
 7. ~~чтоб сверяла даты vagrantuser и example и не делала провижн~~
 8. намутить locale_gen для centos а то не проходит
 9. StrictHostKeyChecking no check if needed of CentOS
+10. install golang
+11. запустить клон реп только если есть vault

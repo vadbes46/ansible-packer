@@ -1,0 +1,75 @@
+---
+# - name: install php-pecl-amqp
+#   yum:
+#     name: "{{ item }}"
+#     state: present
+#   with_items:
+#     - librabbitmq
+#     - php-pecl-amqp
+#   notify:
+#     - restart php-fpm
+
+- name: clone rabbitmq-c
+  git:
+    repo: https://github.com/alanxz/rabbitmq-c.git
+    dest: "{{ ext_workspace }}/rabbitmq-c-{{ lib_rabbitmq_c_version }}"
+    version: "{{ lib_rabbitmq_c_version }}"
+    update: no
+
+- name: build rabbitmq-c
+  shell: "{{ item.shell }}"
+  args:
+    creates: "/usr/local/lib/librabbitmq.so"
+    chdir: "{{ item.chdir }}"
+  with_items:
+    - { shell: 'mkdir build', chdir: '{{ ext_workspace }}/rabbitmq-c-{{ lib_rabbitmq_c_version }}' }
+    - { shell: 'cmake ..', chdir: '{{ ext_workspace }}/rabbitmq-c-{{ lib_rabbitmq_c_version }}/build' }
+    - { shell: 'cmake --build .', chdir: '{{ ext_workspace }}/rabbitmq-c-{{ lib_rabbitmq_c_version }}/build' }
+    - { shell: 'cmake -DCMAKE_INSTALL_LIBDIR=/usr/local/lib ..', chdir: '{{ ext_workspace }}/rabbitmq-c-{{ lib_rabbitmq_c_version }}/build' }
+    - { shell: 'cmake --build . --target install', chdir: '{{ ext_workspace }}/rabbitmq-c-{{ lib_rabbitmq_c_version }}/build' }
+  notify:
+    - restart php-fpm
+
+- name: download php-amqp
+  get_url:
+    url: "http://pecl.php.net/get/amqp-{{ ext_php_amqp_version }}.tgz"
+    dest: "{{ ext_workspace }}/amqp-{{ ext_php_amqp_version }}.tgz"
+    timeout: 360
+
+- name: untar php-amqp
+  unarchive:
+    src: "{{ ext_workspace }}/amqp-{{ ext_php_amqp_version }}.tgz"
+    dest: "{{ ext_workspace }}"
+    copy: no
+
+- name: build php-amqp
+  shell: "{{ item }}"
+  args:
+    creates: "{{ ext_module_path }}/amqp.so"
+    chdir: "{{ ext_workspace }}/amqp-{{ ext_php_amqp_version }}"
+  with_items:
+    - phpize
+    - ./configure --with-amqp --with-librabbitmq-dir=/usr/local
+    - make
+    - make install
+
+- name: copy amqp ini into main extension config folders
+  copy:
+    src: amqp.ini
+    dest: "{{ item }}/20-amqp.ini"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ php_extension_conf_paths }}"
+  notify:
+    - restart php-fpm
+
+- name: cleanup
+  file:
+    path: "{{ ext_workspace }}/{{ item }}"
+    state: absent
+  with_items:
+    - "rabbitmq-c-{{ lib_rabbitmq_c_version }}"
+    - "amqp-{{ ext_php_amqp_version }}.tgz"
+    - "amqp-{{ ext_php_amqp_version }}"
+    - "package.xml"

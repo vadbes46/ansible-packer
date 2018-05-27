@@ -10,13 +10,13 @@
     state: present
 
 - name: enable remi repo
-  shell: "yum-config-manager --enable remi-php72"
+  shell: "yum-config-manager --enable remi-php72 &>/dev/null"
 
 - name: install php
   yum:
     name: php
     enablerepo: remi-php72
-    state: latest
+    state: present
 
 - name: install php packages
   yum:
@@ -27,7 +27,6 @@
   when: php_packages is defined
   notify:
     - restart php-fpm
-  changed_when: true
 
 - name: enable php-fpm service
   service:

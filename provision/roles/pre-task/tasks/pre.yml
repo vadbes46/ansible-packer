@@ -213,3 +213,8 @@
 
 - name: invoke ldconfig
   shell: "ldconfig"
+
+- name: add PATH /usr/local/bin to /etc/profile
+  lineinfile:
+    path: "/etc/profile"
+    line: "export PATH=\"/usr/local/bin:$PATH\""

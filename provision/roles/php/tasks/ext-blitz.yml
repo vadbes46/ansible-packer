@@ -1,0 +1,41 @@
+---
+- name: download blitz
+  get_url:
+    url: "https://github.com/alexeyrybak/blitz/archive/{{ ext_blitz_version }}.tar.gz"
+    dest: "{{ ext_workspace }}/blitz-{{ ext_blitz_version }}.tar.gz"
+    timeout: 360
+
+- name: untar blitz
+  unarchive:
+    src: "{{ ext_workspace }}/blitz-{{ ext_blitz_version }}.tar.gz"
+    dest: "{{ ext_workspace }}"
+    copy: no
+
+- name: build blitz
+  shell: "{{ item }}"
+  args:
+    creates: "{{ ext_module_path }}/blitz.so"
+    chdir: "{{ ext_workspace }}/blitz-{{ ext_blitz_version }}"
+  with_items:
+    - phpize
+    - ./configure
+    - make install
+
+- name: copy blitz ini into main extension config folders
+  copy:
+    src: blitz.ini
+    dest: "{{ item }}/20-blitz.ini"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ php_extension_conf_paths }}"
+  notify:
+    - restart php-fpm
+
+- name: cleanup
+  file:
+    path: "{{ ext_workspace }}/{{ item }}"
+    state: absent
+  with_items:
+    - "blitz-{{ ext_blitz_version }}.tar.gz"
+    - "blitz-{{ ext_blitz_version }}"

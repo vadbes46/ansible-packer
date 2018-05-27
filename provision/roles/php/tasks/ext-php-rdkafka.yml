@@ -1,0 +1,60 @@
+---
+- name: clone librdkafka
+  git:
+    repo: https://github.com/edenhill/librdkafka.git
+    dest: "{{ ext_workspace }}/librdkafka"
+    version: "{{ ext_librdkafka_version }}"
+    update: no
+
+- name: build librdkafka
+  shell: "{{ item }}"
+  args:
+    creates: "/usr/local/lib/librdkafka.so"
+    chdir: "{{ ext_workspace }}/librdkafka"
+  with_items:
+    - ./configure
+    - make
+    - make install
+
+- name: download php-rdkafka
+  get_url:
+    url: "https://github.com/arnaud-lb/php-rdkafka/archive/{{ ext_php_rdkafka_version }}.tar.gz"
+    dest: "{{ ext_workspace }}/php-rdkafka-{{ ext_php_rdkafka_version }}.tar.gz"
+    timeout: 360
+
+- name: untar php-rdkafka
+  unarchive:
+    src: "{{ ext_workspace }}/php-rdkafka-{{ ext_php_rdkafka_version }}.tar.gz"
+    dest: "{{ ext_workspace }}"
+    copy: no
+
+- name: build rdkafka
+  shell: "{{ item }}"
+  args:
+    creates: "{{ ext_module_path }}/rdkafka.so"
+    chdir: "{{ ext_workspace }}/php-rdkafka-{{ ext_php_rdkafka_version }}"
+  with_items:
+    - phpize
+    - ./configure
+    - make all -j 5
+    - make install
+
+- name: copy rdkafka ini into main extension config folders
+  copy:
+    src: rdkafka.ini
+    dest: "{{ item }}/20-rdkafka.ini"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ php_extension_conf_paths }}"
+  notify:
+    - restart php-fpm
+
+- name: cleanup
+  file:
+    path: "{{ ext_workspace }}/{{ item }}"
+    state: absent
+  with_items:
+    - "librdkafka"
+    - "php-rdkafka-{{ ext_php_rdkafka_version }}.tar.gz"
+    - "php-rdkafka-{{ ext_php_rdkafka_version }}"

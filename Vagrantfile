@@ -42,10 +42,9 @@ Vagrant.configure("2") do |config|
   config.hostmanager.ignore_private_ip = false
   config.hostmanager.include_offline = false
 
-  # config.vm.box = "rarek/centos7"
-  config.vm.box = "boxcentos"
-  # config.vm.box = "centos/7"
-  # config.vm.box_version = "1.1.7"
+  config.vm.box = "vadbes46/centos-box"
+  # config.vm.box = "boxcentos"
+  config.vm.box_version = "1.0.0"
   config.vm.box_check_update = true
   config.vbguest.auto_reboot = true
   # config.vbguest.yes = false
@@ -193,7 +192,9 @@ Vagrant.configure("2") do |config|
       chmod 600 /home/vagrant/.ssh/id_rsa
       chmod 644 /home/vagrant/.ssh/id_rsa.pub
       cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
-      ssh-keyscan -p 7999 -H stash.paymantix.com > /home/vagrant/.ssh/known_hosts 2>/dev/null
+      ssh-keyscan -H -p 7999 -t rsa stash.paymantix.com > /home/vagrant/.ssh/known_hosts 2>/dev/null
+      sed -i "s/^\\[.*ssh-rsa/\\[stash.paymantix.com\\]:7999,\\[206.54.161.160\\]:7999,\\[206.54.161.161\\]:7999 ssh-rsa/g" /home/vagrant/.ssh/known_hosts
+      ssh-keyscan -H -t rsa github.com >> /home/vagrant/.ssh/known_hosts 2>/dev/null
       chown -R vagrant:vagrant /home/vagrant/.ssh
       if [ ! -e /vagrant ]; then
         ln -s #{config.user.path.root_dir}/ansible-packer /vagrant;
@@ -204,7 +205,7 @@ Vagrant.configure("2") do |config|
 
     node.vm.provision "shell", inline: <<-SHELL
       #!/bin/bash
-      echo #{config.user.env.vault_pass} > /home/vagrant/vault_pass
+      echo #{config.user.env.vault_pass} > /home/vagrant/.vault_pass
     SHELL
 
     if config.user.env.in_office then
@@ -223,7 +224,7 @@ Vagrant.configure("2") do |config|
       ansible.compatibility_mode = "2.0"
       ansible.tags = tags
       if config.user.env.vault_pass != "" then
-        ansible.vault_password_file = "/home/vagrant/vault_pass"
+        ansible.vault_password_file = "/home/vagrant/.vault_pass"
       end
       # ansible.verbose = "vvv"
       # ansible.raw_arguments = ["--connection=paramiko"]

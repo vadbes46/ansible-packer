@@ -1,4 +1,11 @@
 ---
 - include_tasks: install.yml
 - include_tasks: configure.yml
-- include_tasks: tracer.yml
+- include_tasks: ext-amqp.yml
+- include_tasks: ext-blitz.yml
+- include_tasks: ext-geoip.yml
+- include_tasks: ext-jaeger-client.yml
+- include_tasks: ext-phalcon.yml
+- include_tasks: ext-php-rdkafka.yml
+- include_tasks: ext-phpredis.yml
+- include_tasks: ext-pinba.yml

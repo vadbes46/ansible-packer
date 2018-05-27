@@ -1,0 +1,48 @@
+---
+- name: clone jaeger-client
+  git:
+    repo: git@github.com:vadbes46/jaeger-client-php-ext.git
+    dest: "{{ ext_workspace }}/jaeger-client-php-ext"
+    version: "{{ ext_jaeger_client_version }}"
+    update: yes
+    accept_hostkey: yes
+    recursive: yes
+    force: yes
+  become: yes
+  become_user: "{{ env.username }}"
+
+- name: build jaeger-client
+  shell: "{{ item.shell }}"
+  args:
+    chdir: "{{ item.chdir }}"
+    creates: "{{ ext_module_path }}/jaeger-client.so"
+  with_items:
+    - { shell: 'sed -i "s/  INSTALL_PREFIX.*/  INSTALL_PREFIX=\/usr\/local/" Makefile', chdir: '{{ ext_workspace }}/jaeger-client-php-ext/PHP-CPP' }
+    - { shell: 'make clean', chdir: '{{ ext_workspace }}/jaeger-client-php-ext/PHP-CPP' }
+    - { shell: 'scl enable devtoolset-4 "bash -c make"', chdir: '{{ ext_workspace }}/jaeger-client-php-ext/PHP-CPP' }
+    - { shell: 'make install', chdir: '{{ ext_workspace }}/jaeger-client-php-ext/PHP-CPP' }
+    - { shell: 'make clean', chdir: '{{ ext_workspace }}/jaeger-client-php-ext' }
+    - { shell: 'scl enable devtoolset-4 "bash -c make"', chdir: '{{ ext_workspace }}/jaeger-client-php-ext' }
+    - { shell: 'make install', chdir: '{{ ext_workspace }}/jaeger-client-php-ext' }
+  notify:
+    - restart php-fpm
+
+- name: remove jaeger-client artifacts
+  file:
+    path: "{{ ext_workspace }}/jaeger-client-php-ext"
+    state: absent
+
+- name: remove prev jaeger binaries and UI
+  file:
+    path: "{{ path.root_dir }}/ansible-packer/tools/tracer/bin"
+    state: absent
+
+- name: get jaeger binaries and UI
+  git:
+    repo: git@github.com:vadbes46/jaeger-build.git
+    dest: "{{ path.root_dir }}/ansible-packer/tools/tracer/bin"
+    version: "1.2.0"
+    update: yes
+    accept_hostkey: yes
+  become: yes
+  become_user: "{{ env.username }}"

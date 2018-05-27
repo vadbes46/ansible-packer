@@ -1,0 +1,10 @@
+---
+- name: install GeoIp packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - GeoIP-devel
+    - php-pecl-geoip
+  notify:
+    - restart php-fpm

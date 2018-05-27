@@ -1,0 +1,25 @@
+---
+- name: download phalcon/stable
+  get_url:
+    url: https://packagecloud.io/install/repositories/phalcon/stable/script.rpm.sh
+    dest: "{{ ext_workspace }}/phalcon-script.rpm.sh"
+    mode: 0755
+    timeout: 360
+
+- name: execute phalcon installer
+  shell: "{{ ext_workspace }}/phalcon-script.rpm.sh"
+
+- name: install php72u-phalcon
+  yum:
+    name: "{{ item }}"
+    enablerepo: phalcon_stable
+    state: present
+  with_items:
+    - php72u-phalcon
+  notify:
+    - restart php-fpm
+
+- name: cleanup
+  file:
+    path: "{{ ext_workspace }}/phalcon-script.rpm.sh"
+    state: absent

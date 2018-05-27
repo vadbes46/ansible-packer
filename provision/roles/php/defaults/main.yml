@@ -12,25 +12,23 @@ php_packages:
   - php-mysqlnd
   - php-odbc
   - php-pdo
-  - php-pecl-gearman
   - php-pecl-memcached
   - php-pecl-zip
+  - php-process
   - php-soap
   - php-xml
 
 php_extension_conf_paths:
-  - /etc/php-fpm.d
   - /etc/php.d
-# php_extension_mods_path: "/etc/php/7.0/mods-available"
+  - /etc/php-fpm.d
+  - /etc/php-zts.d
 ext_workspace: "/home/{{ env.username }}"
 ext_module_path: "/usr/lib64/php/modules"
-# ext_phpamqp_version: "1.9.3"
-# ext_librdkafka_version: "v0.11.3"
-# ext_rdkafka_version: "3.0.5"
-# ext_rdkafka_config_filename: "20-rdkafka.ini"
-# ext_amqp_config_filename: "20-amqp.ini"
-# ext_pinba_config_filename: "20-pinba.ini"
-# ext_blitz_version: "0.10.4-PHP7"
-# ext_blitz_config_filename: "20-blitz.ini"
-# ext_redis_config_filename: "20-redis.ini"
-# ext_xhprof_config_filename: "20-xhprof.ini"
+
+ext_blitz_version: "0.10.4-PHP7"
+ext_jaeger_client_version: "1.1"
+ext_librdkafka_version: "v0.11.4"
+ext_php_amqp_version: "1.9.3"
+ext_php_rdkafka_version: "3.0.5"
+ext_phpredis_version: "4.0.2"
+lib_rabbitmq_c_version: "v0.9.0"

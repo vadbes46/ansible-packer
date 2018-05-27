@@ -199,6 +199,7 @@ Vagrant.configure("2") do |config|
         ln -s #{config.user.path.root_dir}/ansible-packer /vagrant;
       fi
       sed -i "s/.*host_key_checking.*/host_key_checking = False/g" /etc/ansible/ansible.cfg
+      sed -i "s/.*command_warnings.*/command_warnings = False/g" /etc/ansible/ansible.cfg
     SHELL
 
     node.vm.provision "shell", inline: <<-SHELL

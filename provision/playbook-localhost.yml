@@ -12,7 +12,7 @@
     - php
     - kafka
     # - mysql
-    # - composer
+    - composer
     # - vertica
     # - app
     # - plus
@@ -33,7 +33,7 @@
     - php
     - kafka
     # - mysql
-    # - composer
+    - composer
     # - vertica
     # - app
     # - plus
@@ -54,7 +54,7 @@
     - php
     - kafka
     # - mysql
-    # - composer
+    - composer
     # - vertica
     # - app
     # - plus

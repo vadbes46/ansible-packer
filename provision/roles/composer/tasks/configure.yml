@@ -1,0 +1,35 @@
+---
+- name: install configured globally-required packages
+  shell: >
+    COMPOSER_HOME={{ composer_home_path }}
+    composer global require {{ item.name }}:{{ item.release | default('@stable') }} --no-progress
+  become: yes
+  become_user: "{{ env.username }}"
+  with_items: "{{ composer_global_packages }}"
+  when: composer_global_packages|length > 0
+
+- name: add composer_home_path bin directory to global $PATH
+  template:
+    src: composer.sh.j2
+    dest: /etc/profile.d/composer.sh
+    mode: 0644
+
+# - name: StrictHostKeyChecking no (dev only!)
+#   lineinfile:
+#     dest: /etc/ssh/ssh_config
+#     create: yes
+#     state: present
+#     line: "StrictHostKeyChecking no"
+#     regexp: "StrictHostKeyChecking no"
+
+- name: composer config
+  shell: "composer config --global {{ item }}"
+  with_items:
+    - "vendor-dir {{ composer_home_path }}/vendor"
+    - "discard-changes true"
+    - "process-timeout 600"
+    - "preferred-install dist"
+    - "github-oauth.github.com {{ github.oauth_token }}"
+  become: yes
+  become_user: "{{ env.username }}"
+

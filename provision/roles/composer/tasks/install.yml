@@ -1,0 +1,23 @@
+---
+- name: check if composer is installed
+  stat:
+    path: "{{ composer_path }}"
+  register: composer_bin
+
+- name: download composer installer
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /tmp/composer-setup.php
+    mode: 0755
+    timeout: 360
+  when: composer_bin is not defined or not composer_bin.stat.exists
+
+- name: run composer installer
+  shell: | 
+    cd /tmp && php composer-setup.php
+    mv /tmp/composer.phar "{{ composer_path }}"
+    "{{ composer_path }}" self-update
+    rm /tmp/composer-setup.php
+  args:
+    creates: "{{ composer_path }}"
+  when: composer_bin is not defined or not composer_bin.stat.exists

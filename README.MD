@@ -66,7 +66,8 @@ FPM is configured to listen ports instead of sockets
 ## ```gcc 5.3.1```
     installed from devtoolset-4 and configured with update-alternatives
 
-## ```composer```
+## ```composer 1.6.5```
+```fxp/composer-asset-plugin 1.4.3``` is installed as global require package
 
 # ```Vagrant Base Box```
 Commands for building image:
@@ -93,3 +94,4 @@ After a box has been compiled it can be added with the following command
 6. добавить таги по системам - plus, pmx, admin, terminal, и скрипты, чтобы можно было делать провижн только для нужных систем, сократив время
 7. ~~чтоб сверяла даты vagrantuser и example и не делала провижн~~
 8. намутить locale_gen для centos а то не проходит
+9. StrictHostKeyChecking no check if needed of CentOS

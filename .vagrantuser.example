@@ -26,8 +26,8 @@ path:                                             # relative local paths to repo
   root_dir:       "/data"
   sync_folder:
     - path:       "../logs"                       # sync guest logs to the host
-      mount:                                      ["dmode=777", "fmode=777"]
-      group:                                      "www-data"
+      mount:                  ["dmode=777", "fmode=777"]
+      group:                  "www-data"
     - path:       "../plus"                       # https://stash.paymantix.com/projects/PHP/repos/plus/browse
 
 # mount_options will have precedence over the owner and group options.
@@ -55,3 +55,6 @@ host:                                             # virtual hosts inside VM
 nginx_fpm:
   user_group: "www-data"
   id_gid: "5001"
+
+github:                                           # add your token here
+  oauth_token: 688e6011a881bad2e752cdd13489c3a95810c14a

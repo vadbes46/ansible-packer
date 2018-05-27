@@ -1,0 +1,7 @@
+---
+composer_path: /usr/bin/composer
+composer_home_path: '~/.config/composer'
+composer_global_packages:
+ - { name: fxp/composer-asset-plugin}
+# - { name: phpunit/phpunit, release: "4.7.x" }
+# - { name: phpunit/phpunit, release: "@stable" }

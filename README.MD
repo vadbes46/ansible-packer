@@ -1,41 +1,49 @@
-Table of Contents
+>**```Table Of Contents```**
+
 - [```Ansible for CentOS```](#ansible-for-centos)
 - [```Features```](#features)
+    - [```.vagrantuser```](#vagrantuser)
+    - [```Vagrantfile```](#vagrantfile)
+    - [```Box```](#box)
 - [```Installed Software```](#installed-software)
-    - [```PHP 7.2.5 (remi-php72 repo) with extensions:```](#php-725-remi-php72-repo-with-extensions)
+    - [```PHP 7.2.6 (remi-php72 repo)```](#php-726-remi-php72-repo)
+        - [```Packages/Modules```](#packages-modules)
+        - [```Extensions```](#extensions)
+        - [```Extensions compiled```](#extensions-compiled)
+        - [```Configuration```](#configuration)
     - [```nginx 1.14.0```](#nginx-1140)
     - [```kafka 1.1.0```](#kafka-110)
     - [```Percona 5.7```](#percona-57)
     - [```gcc 5.3.1```](#gcc-531)
-    - [```composer```](#composer)
+    - [```composer 1.6.5```](#composer-165)
 - [```Vagrant Base Box```](#vagrant-base-box)
 - [```TODO```](#todo)
 
 # ```Ansible for CentOS```
 
-This is the template of `new ansible environment` for CentOS.
+This is the template of `ansible environment` for CentOS.
 
 It has been grown from Ubuntu environment with all enhancements continuously appearing during 9 months.
 
 # ```Features```
-```.vagrantuser```
+## ```.vagrantuser```
 1. private VM ip is configured through .vagrantuser
 2. timezone (system time) is configurable (influences on mysql, php)
 3. all synced folders are defined in .vagrantuser, so never change Vagrantfile
 4. vault password should exist in .vagrantuser to execute private ansible rules, obtain it from IT, if empty or incorrect - skip those rules
 
-```Vagrantfile```
+## ```Vagrantfile```
 1. check `www-data` user exists, if not - mount as `vagrant`
 2. check .vagrantuser exists and not outdated, else - stop executing
 
-```Box```
+## ```Box```
 1. all services are disabled by default in the box
 2. 
 3. ~~Box can be got from vagrant cloud as "rarek/centos7"~~
 
 # ```Installed Software```
 ## ```PHP 7.2.6 (remi-php72 repo)```
-### ```Packages/Modules:```
+### ```Packages/Modules```
 - php-bcmath
 - php-cli
 - php-common
@@ -49,13 +57,13 @@ It has been grown from Ubuntu environment with all enhancements continuously app
 - php-process
 - php-soap
 - php-xml
-### ```Extensions:```
+### ```Extensions```
 - php-intl
 - php-json
 - php-pecl-geoip
 - php-pecl-memcached
 - php-pecl-zip
-### ```Extensions compiled:```
+### ```Extensions compiled```
 - librdkafka v0.11.4 + php-rdkafka 3.0.5
 - jaeger-client 1.1
 - phalcon 3.3.2
@@ -63,7 +71,7 @@ It has been grown from Ubuntu environment with all enhancements continuously app
 - blitz 0.10.4-PHP7
 - phpredis 4.0.2
 - rabbitmq-c v0.9.0 + php-amqp 1.9.3
-### ```Configuration:```
+### ```Configuration```
 FPM is configured to listen ports instead of sockets
 
 ## ```nginx 1.14.0```
@@ -94,13 +102,11 @@ After a box has been compiled it can be added with the following command
 4. ~~убрать мусор из npm и node пакетов.~~
 
 переехало с ансибла:
-
 1. при vagrant up выполнить скрипт клона реп
 2. при старте проверить под админом ли, проверить опции git - для винды актуально
 3. плюсовые редиректы аналогично нада сделать plus01.te01-l1.nl3
 4. composer clear-cache не все чистит, где то походу под рутом лежит
 5. ~~сделать пятиминутный крон для чистки логов с проверкой доступности свободного места~~
-
    сделан двухчасовой крон чистки логов, нужно сделать чтоб по заполнению места
 6. добавить таги по системам - plus, pmx, admin, terminal, и скрипты, чтобы можно было делать провижн только для нужных систем, сократив время
 7. ~~чтоб сверяла даты vagrantuser и example и не делала провижн~~

@@ -1,7 +1,7 @@
 ---
 - name: clone jaeger-client
   git:
-    repo: git@github.com:vadbes46/jaeger-client-php-ext.git
+    repo: git@github.com:ITECOMMPAY/jaeger-client-php-ext.git
     dest: "{{ ext_workspace }}/jaeger-client-php-ext"
     version: "{{ ext_jaeger_client_version }}"
     update: yes
@@ -41,7 +41,7 @@
   git:
     repo: git@github.com:vadbes46/jaeger-build.git
     dest: "{{ path.root_dir }}/ansible-packer/tools/tracer/bin"
-    version: "1.2.0"
+    version: "1.5.0"
     update: yes
     accept_hostkey: yes
   become: yes

@@ -19,10 +19,9 @@
 - name: build rabbitmq-c
   shell: "{{ item.shell }}"
   args:
-    creates: "/usr/local/lib/librabbitmq.so"
     chdir: "{{ item.chdir }}"
   with_items:
-    - { shell: 'mkdir build', chdir: '{{ ext_workspace }}/rabbitmq-c-{{ lib_rabbitmq_c_version }}' }
+    - { shell: 'if [ ! -d "build" ]; then mkdir build; fi', chdir: '{{ ext_workspace }}/rabbitmq-c-{{ lib_rabbitmq_c_version }}' }
     - { shell: 'cmake ..', chdir: '{{ ext_workspace }}/rabbitmq-c-{{ lib_rabbitmq_c_version }}/build' }
     - { shell: 'cmake --build .', chdir: '{{ ext_workspace }}/rabbitmq-c-{{ lib_rabbitmq_c_version }}/build' }
     - { shell: 'cmake -DCMAKE_INSTALL_LIBDIR=/usr/local/lib ..', chdir: '{{ ext_workspace }}/rabbitmq-c-{{ lib_rabbitmq_c_version }}/build' }

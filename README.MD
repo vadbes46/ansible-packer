@@ -7,7 +7,7 @@
     - [```Box```](#box)
 - [```Installed Software```](#installed-software)
     - [```PHP 7.2.6 (remi-php72 repo)```](#php-726-remi-php72-repo)
-        - [```Packages/Modules```](#packages-modules)
+        - [```Packages/Modules```](#packagesmodules)
         - [```Extensions```](#extensions)
         - [```Extensions compiled```](#extensions-compiled)
         - [```Configuration```](#configuration)
@@ -66,8 +66,8 @@ It has been grown from Ubuntu environment with all enhancements continuously app
 ### ```Extensions compiled```
 - librdkafka v0.11.4 + php-rdkafka 3.0.5
 - jaeger-client 1.1
-- phalcon 3.3.2
-- pinba 1.1.2
+- phalcon 3.4.0
+- pinba 1.1.2-dev
 - blitz 0.10.4-PHP7
 - phpredis 4.0.2
 - rabbitmq-c v0.9.0 + php-amqp 1.9.3

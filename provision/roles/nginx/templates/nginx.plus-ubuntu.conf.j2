@@ -1,5 +1,5 @@
 server {
-  server_name {{ host_prefix }}{{ host_plus }}{{ host_postfix }}{{ vagrant_postfix }};
+  server_name {{ host_prefix }}{{ host.plus }}{{ host_postfix }}{{ vagrant_postfix }};
   root {{ root_dir }}/plus/public_html;
 
   location = /favicon.ico {

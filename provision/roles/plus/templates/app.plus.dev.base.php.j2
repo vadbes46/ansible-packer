@@ -7,7 +7,7 @@ $base = require_once __DIR__ . '/../base.php';
 
 $config = [
     'key_daemon' => [
-        'base_uri' => '{{ host.host_keydaemon }}',
+        'base_uri' => '{{ host.keydaemon }}',
         'method' => 'POST',
         'attempts' => 5,
         'reattempt_timeout' => 50000,
@@ -36,12 +36,12 @@ $config = [
                 'verify_cert' => false
             ],
         ],
-        'plusUrl' => 'http://{{ host.host_plus }}',
-        'plusPrivateUrl' => 'http://{{ host.host_plus }}',
+        'plusUrl' => 'http://{{ host.plus }}',
+        'plusPrivateUrl' => 'http://{{ host.plus }}',
         'gates' => [
             'eco_dev' => [
-                GateSettings::CALLBACK_URL => 'http://{{ host.host_gate }}/v2/payment/plus/callback',
-                GateSettings::RETURN_URL => 'http://{{ host.host_plus }}/test/gateIn',
+                GateSettings::CALLBACK_URL => 'http://{{ host.gate }}/v2/payment/plus/callback',
+                GateSettings::RETURN_URL => 'http://{{ host.plus }}/test/gateIn',
             ],
         ],
         //'cert_dir' => __DIR__ . '/../certs',

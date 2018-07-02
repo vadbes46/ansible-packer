@@ -3,7 +3,7 @@ server {
     server_name front01.qa.ams;
 
     location / {
-        proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }};
+        proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }};
     }
 }
 
@@ -12,6 +12,6 @@ server {
     server_name front01.qa.ams;
 
     location / {
-        proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }};
+        proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }};
     }
 }

@@ -173,9 +173,9 @@ Vagrant.configure("2") do |config|
     end
 
     node.hostmanager.aliases = [
-      "#{config.user.host.host_plus}",
-      "#{config.user.host.host_gate}",
-      "#{config.user.host.host_mock}",
+      "#{config.user.host.plus}",
+      "#{config.user.host.gate}",
+      "#{config.user.host.mock}",
       ]
 
     node.vm.provision "file", source: config.user.id_rsa.deployer_id_rsa, destination: "/home/vagrant/.ssh/id_rsa"

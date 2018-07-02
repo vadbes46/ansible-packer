@@ -3,7 +3,7 @@ server {
     server_name mock01.qa.ams;
 
     location / {
-        proxy_pass http://{{ host_prefix }}{{ host_mock }}{{ host_postfix }}{{ vagrant_postfix }};
+        proxy_pass http://{{ host_prefix }}{{ host.mock }}{{ host_postfix }}{{ vagrant_postfix }};
     }
 }
 
@@ -12,7 +12,7 @@ server {
     server_name mock01.qa.ams;
 
     location / {
-        proxy_pass http://{{ host_prefix }}{{ host_mock }}{{ host_postfix }}{{ vagrant_postfix }};
+        proxy_pass http://{{ host_prefix }}{{ host.mock }}{{ host_postfix }}{{ vagrant_postfix }};
     }
 }
 
@@ -21,7 +21,7 @@ server {
     server_name mock01.qa.ams;
 
     location / {
-        proxy_pass http://{{ host_prefix }}{{ host_mock }}{{ host_postfix }}{{ vagrant_postfix }};
+        proxy_pass http://{{ host_prefix }}{{ host.mock }}{{ host_postfix }}{{ vagrant_postfix }};
     }
 }
 

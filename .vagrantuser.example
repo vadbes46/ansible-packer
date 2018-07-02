@@ -46,11 +46,20 @@ id_rsa:                                           # these keys must be authorize
   deployer_id_rsa_pub: "~/.ssh/id_rsa.pub"
 
 host:                                             # virtual hosts inside VM
-  host_plus: "plus.plus"
-  host_gate: "gate.test"
-  host_mock: "mock01.ecpdss.net"
-  host_keydaemon: "gate.test:12080"
-  host_memcached: "gate.test"
+  gate: "gate"
+  # worker: "worker"
+  db: "db"
+  # host_admin: "admin"
+  # host_nadmin: "nadmin"
+  # host_kafka01: "kafka01"
+  # host_terminal: "terminal"
+  plus: "plus"
+  mock: "mock01.ecpdss.net"
+  # host_xhprof: "xhprof"
+  # host_tracer: "tracer"
+  keydaemon: "gate.test:12080"
+  # keydaemon_url: "{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}:12080" # ckeymanager01.dev.ams:12080
+  memcached: "gate.test"
 
 nginx_fpm:
   user_group: "www-data"
@@ -58,3 +67,11 @@ nginx_fpm:
 
 github:                                           # add your token here
   oauth_token: 688e6011a881bad2e752cdd13489c3a95810c14a
+
+mysql:
+  host: 127.0.0.1
+  root_pass: 123456
+  dbuser_name: dbuser
+  dbuser_pass: dbpass
+  writer_name: writer
+  writer_pass: 123456

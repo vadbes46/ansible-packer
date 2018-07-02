@@ -2,7 +2,7 @@ server {
   listen 80;
   root {{ root_dir }}/pmx/htdocs;
   index index.php index.html;
-  server_name {{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }};
+  server_name {{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }};
 
   expires -1;
 
@@ -11,63 +11,63 @@ server {
   }
 
   location /v2/payment/card/purchase {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/sale;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/sale;
   }
 
   location /v2/payment/card/payout-by-transaction {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/payout/transaction;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/payout/transaction;
   }
 
   location /v2/payment/card/confirm {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/capture;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/capture;
   }
 
   location /v2/payment/card/void {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/cancel;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/cancel;
   }
 
   location /v2/payment/card/complete {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/3ds_result;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/3ds_result;
   }
 
   location /v2/payment/card/refund-reverse {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/reversal;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/reversal;
   }
 
   location /v2/payment/card/wallet/purchase {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/sale/saved;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/sale/saved;
   }
 
   location /v2/payment/card/wallet/auth  {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/auth/saved;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/auth/saved;
   }
 
   location /v2/payment/card/masked/purchase {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/sale/masked;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/sale/masked;
   }
 
   location /v2/payment/card/masked/auth {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/auth/masked;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/card/auth/masked;
   }
 
   location /v2/payment/status/order {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/status;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/status;
   }
 
   location /v2/payment/china/banks/purchase {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/china-banks/sale;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/china-banks/sale;
   }
 
   location /v2/payment/china/banks/payout {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/china-banks/payout;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/china-banks/payout;
   }
 
   location /v2/payment/none-card/purchase {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/wechat/sale;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/payment/wechat/sale;
   }
 
   location /v2/customer/wallet/delete-by-pan {
-    proxy_pass http://{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/customer/wallet/delete/masked;
+    proxy_pass http://{{ host_prefix }}{{ host.gate }}{{ host_postfix }}{{ vagrant_postfix }}/v2/customer/wallet/delete/masked;
   }
 
   location / {

@@ -1,0 +1,65 @@
+---
+- name: Ensure dependencies for installing XHProf are present.
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - make
+    - gcc
+    - unzip
+    - graphviz
+
+- name: clone XHProf
+  git:
+    repo: https://github.com/longxinH/xhprof.git
+    dest: "{{ ext_workspace }}/xhprof"
+    version: master
+    update: yes
+    accept_hostkey: yes
+
+- name: Build XHProf
+  command: "{{ item }}"
+  args:
+    chdir: "{{ ext_workspace }}/xhprof/extension"
+    creates: "{{ ext_workspace }}/xhprof/extension/modules/xhprof.so"
+  with_items:
+    - phpize
+    - ./configure
+    - make
+    - make install
+  notify:
+    - restart php-fpm
+
+- name: Move XHProf module into place.
+  shell: >
+    cp {{ ext_workspace }}/xhprof/extension/modules/xhprof.so {{ ext_module_path }}/xhprof.so
+    creates={{ ext_module_path }}/xhprof.so
+  notify: restart php-fpm
+
+- name: copy XHProf ini into main extension config folders
+  copy:
+    src: xhprof.ini
+    dest: "{{ item }}/20-xhprof.ini"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ php_extension_conf_paths }}"
+  notify:
+    - restart php-fpm
+
+- name: Move XHProf PHP library into place.
+  shell: >
+    cp -r {{ ext_workspace }}/xhprof/xhprof_lib /usr/share/php/xhprof_lib
+    creates=/usr/share/php/xhprof_lib/utils/xhprof_lib.php
+
+- name: Move XHProf UI into place.
+  shell: >
+    cp -r {{ ext_workspace }}/xhprof/xhprof_html /usr/share/php/xhprof_html
+    creates=/usr/share/php/xhprof_html/index.php
+
+- name: cleanup
+  file:
+    path: "{{ ext_workspace }}/{{ item }}"
+    state: absent
+  with_items:
+    - "xhprof"

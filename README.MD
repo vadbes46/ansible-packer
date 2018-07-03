@@ -20,6 +20,7 @@
     - [```Supervisor 3.3.4```](#supervisor-334)
     - [```gcc 5.3.1```](#gcc-531)
     - [```composer 1.6.5```](#composer-165)
+    - [```Xdebug 2.6.0```](#xdebug-260)
 - [```Vagrant Base Box```](#vagrant-base-box)
 - [```TODO```](#todo)
 
@@ -74,6 +75,7 @@ It has been grown from Ubuntu environment with all enhancements continuously app
 - blitz 0.10.4-PHP7
 - phpredis 4.0.2
 - rabbitmq-c v0.9.0 + php-amqp 1.9.3
+- xhprof 2.0.1
 ### ```Configuration```
 FPM is configured to listen ports instead of sockets
 
@@ -100,6 +102,9 @@ FPM is configured to listen ports instead of sockets
 
 ## ```composer 1.6.5```
 ```fxp/composer-asset-plugin 1.4.3``` is installed as global require package
+
+## ```Xdebug 2.6.0```
+    --> TODO
 
 # ```Vagrant Base Box```
 Commands for building image:

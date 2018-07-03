@@ -9,3 +9,4 @@
 - include_tasks: ext-php-rdkafka.yml
 - include_tasks: ext-phpredis.yml
 - include_tasks: ext-pinba.yml
+- include_tasks: ext-xhprof.yml

@@ -28,7 +28,7 @@ path:                                             # relative local paths to repo
     - path:       "../logs"                       # sync guest logs to the host
       mount:                  ["dmode=777", "fmode=777"]
       group:                  "www-data"
-    - path:       "../plus"                       # https://stash.paymantix.com/projects/PHP/repos/plus/browse
+    - path:       "../plus"                       # https://stash.ecommpay.com/projects/PHP/repos/plus/browse
 
 # mount_options will have precedence over the owner and group options.
 # config.vm.synced_folder ".", "/vagrant", owner: "vagrant", group: "vagrant", mount_options: ["uid=1234", "gid=1234"] # ignore owner/group

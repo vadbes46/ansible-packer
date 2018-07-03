@@ -267,7 +267,7 @@
         "chmod 600 /home/vagrant/.ssh/id_rsa",
         "chmod 644 /home/vagrant/.ssh/id_rsa.pub",
         "cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys",
-        "ssh-keyscan -p 7999 -H stash.paymantix.com 78.140.183.181 > /home/vagrant/.ssh/known_hosts"
+        "ssh-keyscan -p 7999 -H stash.ecommpay.com 206.54.161.160 > /home/vagrant/.ssh/known_hosts"
       ]
     },
     {

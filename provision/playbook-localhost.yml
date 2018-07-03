@@ -13,6 +13,7 @@
     - kafka
     - mysql
     - composer
+    - redis
     # - vertica
     # - app
     # - plus
@@ -34,6 +35,7 @@
     - kafka
     - mysql
     - composer
+    - redis
     # - vertica
     # - app
     # - plus
@@ -55,6 +57,7 @@
     - kafka
     - mysql
     - composer
+    - redis
     # - vertica
     # - app
     # - plus

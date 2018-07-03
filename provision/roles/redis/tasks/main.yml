@@ -1,0 +1,27 @@
+---
+- include_tasks: check_vars.yml
+
+- include_tasks: download.yml
+  tags:
+    - download
+
+- include_tasks: dependencies.yml
+  tags:
+    - install
+
+- include_tasks: install.yml
+  tags:
+    - install
+
+- include_tasks: server.yml
+  when: not redis_sentinel
+  tags:
+    - config
+
+- include_tasks: sentinel.yml
+  when: redis_sentinel
+  tags:
+    - config
+
+- include_tasks: local_facts.yml
+  when: redis_local_facts|bool

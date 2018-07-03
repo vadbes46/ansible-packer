@@ -3,5 +3,4 @@
 # 
 # daemon_username: nginx
 # 
-# mysql_port: 3306
 # vagrant_postfix: ""

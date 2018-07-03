@@ -123,12 +123,12 @@
   notify:
     - restart mysql
 
-- name: allow root access from any host
-  mysql_user:
-    name: root
-    password: "{{ mysql.root_pass }}"
-    host: "%"
-    priv: "*.*:ALL,GRANT"
-    state: present
-  notify:
-    - restart mysql
+# - name: allow root access from any host
+#   mysql_user:
+#     name: root
+#     password: "{{ mysql.root_pass }}"
+#     host: "%"
+#     priv: "*.*:ALL,GRANT"
+#     state: present
+#   notify:
+#     - restart mysql

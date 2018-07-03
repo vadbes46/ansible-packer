@@ -1,0 +1,120 @@
+---
+- name: ensure python-software-properties is installed
+  apt: 
+    name: python-software-properties
+    state: present
+  when: ansible_distribution == 'Ubuntu'
+
+- name: add erlang official apt repository for Ubuntu 14.04
+  apt_repository:
+    repo: "deb https://packages.erlang-solutions.com/ubuntu trusty contrib"
+    state: present
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'trusty'
+
+- name: add erlang official apt repository for Ubuntu 16.04
+  apt_repository:
+    repo: "deb https://packages.erlang-solutions.com/ubuntu xenial contrib"
+    state: present
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+- name: add erlang key
+  apt_key:
+    url: http://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc
+    state: present 
+  when: ansible_distribution == 'Ubuntu'
+
+- name: add erlang official apt repository for CentOS
+  shell: "curl -s https://packagecloud.io/install/repositories/rabbitmq/erlang/script.rpm.sh | bash -"
+  args:
+    creates: /etc/yum.repos.d/rabbitmq_erlang.repo
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+
+- name: add rabbitmq official apt repository for Ubuntu 14.04
+  apt_repository:
+    repo: "deb https://dl.bintray.com/rabbitmq/debian trusty main"
+    state: present
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'trusty'
+
+- name: add rabbitmq official apt repository for Ubuntu 16.04
+  apt_repository:
+    repo: "deb https://dl.bintray.com/rabbitmq/debian xenial main"
+    state: present
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+- name: add rabbitmq key
+  apt_key:
+    url: http://www.rabbitmq.com/rabbitmq-release-signing-key.asc
+    state: present
+  when: ansible_distribution == 'Ubuntu'
+
+- name: add rabbitmq official apt repository for CentOS
+  shell: "curl -s https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.rpm.sh | bash -"
+  args:
+    creates: /etc/yum.repos.d/rabbitmq_rabbitmq-server.repo
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+
+- name: manually update apt-key
+  apt:
+    update_cache: yes
+  when: ansible_distribution == 'Ubuntu'
+
+- name: check if "{{ rabbitmq.user_group }}" user exists (ignore errors)
+  shell: id {{ rabbitmq.user_group }}
+  ignore_errors: yes
+  changed_when: false
+  register: user_exists
+
+- name: add group "{{ rabbitmq.user_group }}"
+  group:
+    name: "{{ rabbitmq.user_group }}"
+    gid: "{{ rabbitmq.id_gid }}"
+    state: present
+    system: yes
+  when: user_exists is failed
+
+- name: add user "{{ rabbitmq.user_group }}"
+  user:
+    name: "{{ rabbitmq.user_group }}"
+    group: "{{ rabbitmq.user_group }}"
+    uid: "{{ rabbitmq.id_gid }}"
+    comment: "RabbitMQ messaging server"
+    create_home: yes
+    home: "/var/lib/rabbitmq"
+    system: yes
+    shell: /sbin/nologin
+  when: user_exists is failed
+
+- name: install rabbitmq
+  package:
+    name: "rabbitmq-server-{{ rabbitmq_version }}"
+    state: present
+  ignore_errors: yes
+
+- name: .erlang.cookie
+  file:
+    dest: "/var/lib/rabbitmq/.erlang.cookie"
+    owner: rabbitmq
+    group: rabbitmq
+    mode: 0400
+  when: ansible_distribution == 'Ubuntu'
+
+- name: restart rabbitmq-server
+  service:
+    name: rabbitmq-server
+    state: restarted
+
+- name: install rabbitmq_management
+  shell: rabbitmq-plugins enable rabbitmq_management
+
+- name: install rabbitmq_management user
+  shell: "{{ item }}"
+  with_items:
+    - "rabbitmqctl add_user {{ rabbit_admin_user }} {{ rabbit_admin_password }}"
+    - "rabbitmqctl set_user_tags {{ rabbit_admin_user }} administrator"
+    - "rabbitmqctl set_permissions -p / {{ rabbit_admin_user }} \".*\" \".*\" \".*\""
+  when: ansible_local is undefined or ansible_local.installed is undefined or ansible_local.installed.state is undefined or ansible_local.installed.state.rabbitmqctl_user is undefined
+
+- name: set rabbitmqctl_user installed fact
+  lineinfile:
+    dest: /etc/ansible/facts.d/installed.fact
+    line: "rabbitmqctl_user = 1"

@@ -15,6 +15,7 @@
     - composer
     - memcached
     - redis
+    - rabbitmq
     # - vertica
     # - app
     # - plus
@@ -38,6 +39,7 @@
     - composer
     - memcached
     - redis
+    - rabbitmq
     # - vertica
     # - app
     # - plus
@@ -61,6 +63,7 @@
     - composer
     - memcached
     - redis
+    - rabbitmq
     # - vertica
     # - app
     # - plus

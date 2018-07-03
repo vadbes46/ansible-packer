@@ -61,6 +61,17 @@ host:                                             # virtual hosts inside VM
   # keydaemon_url: "{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}:12080" # ckeymanager01.dev.ams:12080
   memcached: "gate.test"
 
+github:                                           # add your token here
+  oauth_token: 688e6011a881bad2e752cdd13489c3a95810c14a
+
+mysql:
+  host: 127.0.0.1
+  root_pass: 123456
+  dbuser_name: dbuser
+  dbuser_pass: dbpass
+  writer_name: writer
+  writer_pass: 123456
+
 nginx_fpm:
   user_group: "www-data"
   id_gid: "5001"
@@ -73,13 +84,6 @@ memcached:
   user_group: "memcached"
   id_gid: "5003"
 
-github:                                           # add your token here
-  oauth_token: 688e6011a881bad2e752cdd13489c3a95810c14a
-
-mysql:
-  host: 127.0.0.1
-  root_pass: 123456
-  dbuser_name: dbuser
-  dbuser_pass: dbpass
-  writer_name: writer
-  writer_pass: 123456
+rabbitmq:
+  user_group: "rabbitmq"
+  id_gid: "5004"

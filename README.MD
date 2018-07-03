@@ -16,6 +16,7 @@
     - [```Percona MySQL 5.7.22```](#percona-mysql-5722)
     - [```Redis 4.0.6```](#redis-406)
     - [```Memcached v1.4.15```](#memcached-v1415)
+    - [```RabbitMQ 3.7.6```](#rabbitmq-376)
     - [```gcc 5.3.1```](#gcc-531)
     - [```composer 1.6.5```](#composer-165)
 - [```Vagrant Base Box```](#vagrant-base-box)
@@ -86,6 +87,9 @@ FPM is configured to listen ports instead of sockets
 ## ```Redis 4.0.6```
 
 ## ```Memcached v1.4.15```
+
+## ```RabbitMQ 3.7.6```
+    with Erlang 20.3.7 (zero-dep from RabbitMQ)
 
 ## ```gcc 5.3.1```
     installed from devtoolset-4 and configured with update-alternatives

@@ -1,0 +1,4 @@
+---
+rabbit_admin_user: pmx@pmx.pmx
+rabbit_admin_password: changeme
+rabbitmq_version: 3.7.*

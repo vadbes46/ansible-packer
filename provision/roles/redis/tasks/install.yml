@@ -24,7 +24,7 @@
     path: /etc/redis
     state: directory
 
-- name: check if redis user exists (ignore errors)
+- name: check if "{{ redis.user_group }}" user exists (ignore errors)
   command: id {{ redis.user_group }}
   ignore_errors: yes
   changed_when: false
@@ -35,6 +35,7 @@
     name: "{{ redis.user_group }}"
     gid: "{{ redis.id_gid }}"
     state: present
+    system: yes
   when: user_exists is failed
 
 - name: add redis user

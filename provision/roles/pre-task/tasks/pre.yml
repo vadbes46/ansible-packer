@@ -90,10 +90,10 @@
     - { name: 'cpp', link: '/usr/bin/cpp', path: '/opt/rh/devtoolset-4/root/usr/bin/cpp', priority: '50' }
     - { name: 'c++', link: '/usr/bin/c++', path: '/opt/rh/devtoolset-4/root/usr/bin/c++', priority: '50' }
 
-#- name: upgrade pip
-#  shell: "pip install --upgrade pip"
-#  become: yes
-#  become_user: "{{ deployer_username }}"
+- name: upgrade pip
+  shell: "pip install --upgrade pip"
+  become: yes
+  become_user: "{{ deployer_username }}"
 
 # - name: add nodejs official apt repository and key
 #   shell: "wget -qO- https://deb.nodesource.com/setup_8.x | bash - warn=no"

@@ -8,12 +8,6 @@
     memcached_user: "{{ __memcached_user }}"
   when: memcached_user is not defined
 
-- name: check if {{ memcached_user }} user exists (ignore errors)
-  command: id {{ memcached_user }}
-  ignore_errors: yes
-  changed_when: false
-  register: user_exists
-
 # Setup/install tasks.
 - name: Update apt cache.
   apt: 
@@ -21,25 +15,36 @@
     cache_valid_time: 86400
   when: ansible_os_family == 'Debian'
 
+- name: check if "{{ memcached.user_group }}" user exists (ignore errors)
+  command: id {{ memcached.user_group }}
+  ignore_errors: yes
+  changed_when: false
+  register: user_exists
+
+- name: add group "{{ memcached.user_group }}"
+  group:
+    name: "{{ memcached.user_group }}"
+    gid: "{{ memcached.id_gid }}"
+    state: present
+    system: yes
+  when: user_exists is failed
+
+- name: add user "{{ memcached.user_group }}"
+  user:
+    name: "{{ memcached.user_group }}"
+    group: "{{ memcached.user_group }}"
+    uid: "{{ memcached.id_gid }}"
+    comment: "Memcached daemon"
+    create_home: no
+    system: yes
+    shell: /sbin/nologin
+  when: user_exists is failed
+
 - name: Install Memcached.
   package:
     name: memcached
     state: present
   register: memcached_install
-
-- name: change group id for "{{ memcached.user_group }}"
-  group:
-    name: "{{ memcached.user_group }}"
-    gid: "{{ memcached.id_gid }}"
-    state: present
-  when: user_exists is failed
-
-- name: change user id for "{{ memcached.user_group }}"
-  user:
-    name: "{{ memcached.user_group }}"
-    group: "{{ memcached.user_group }}"
-    uid: "{{ memcached.id_gid }}"
-  when: user_exists is failed
 
 # Configure Memcached.
 - name: Copy Memcached configuration.

@@ -31,7 +31,7 @@
    - stop_zookeeper_cluster
    - uninstall_topics
 
-- name: add zookeeper systemd script
+- name: add zookeeper systemd service
   template:
     src: service.zookeeper.systemd.j2
     dest: /usr/lib/systemd/system/zookeeper.service
@@ -39,7 +39,7 @@
     group: root
     mode: 0644
 
-- name: add kafka systemd script
+- name: add kafka systemd service
   template:
     src: service.kafka.systemd.j2
     dest: /usr/lib/systemd/system/kafka.service

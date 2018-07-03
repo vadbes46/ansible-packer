@@ -1,0 +1,14 @@
+---
+- name: stop all supervisorctl
+  shell: supervisorctl stop all
+
+- name: reread supervisord
+  shell: supervisorctl reread
+
+- name: update supervisord
+  shell: supervisorctl update
+
+- name: restart supervisord
+  service:
+    name: supervisord
+    state: restarted

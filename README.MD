@@ -17,6 +17,7 @@
     - [```Redis 4.0.6```](#redis-406)
     - [```Memcached v1.4.15```](#memcached-v1415)
     - [```RabbitMQ 3.7.6```](#rabbitmq-376)
+    - [```Supervisor 3.3.4```](#supervisor-334)
     - [```gcc 5.3.1```](#gcc-531)
     - [```composer 1.6.5```](#composer-165)
 - [```Vagrant Base Box```](#vagrant-base-box)
@@ -91,6 +92,9 @@ FPM is configured to listen ports instead of sockets
 ## ```RabbitMQ 3.7.6```
     with Erlang 20.3.7 (zero-dep from RabbitMQ)
 
+## ```Supervisor 3.3.4```
+    from easy_install, configured as systemd service
+
 ## ```gcc 5.3.1```
     installed from devtoolset-4 and configured with update-alternatives
 
@@ -123,3 +127,6 @@ After a box has been compiled it can be added with the following command
 9. StrictHostKeyChecking no check if needed of CentOS
 10. install golang
 11. запустить клон реп только если есть vault
+12. 
+13. доделать nginx
+14. доделать supervisor (будет ли быстро перезапускать по KILL)

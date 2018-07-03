@@ -1,0 +1,5 @@
+---
+- name: install supervisord
+  easy_install:
+    name: supervisor
+    state: latest

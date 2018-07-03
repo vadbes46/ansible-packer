@@ -1,0 +1,73 @@
+---
+- name: create supervisor conf and log directories
+  file:
+    dest: "{{ item }}"
+    state: directory
+  with_items:
+    - "/var/run/supervisor"
+    - "/etc/supervisord.d"
+
+- name: configure supervisord
+  template:
+    src: supervisord.conf
+    dest: "/etc/supervisord.conf"
+
+# - name: update original supervisord init.d script
+#   template:
+#     src: "{{ item }}"
+#     dest: /etc/init.d/supervisor
+#     mode: 0755
+#   with_first_found:
+#     - files:
+#         - "init.{{ ansible_distribution }}-{{ ansible_distribution_release }}"
+#         - "init.{{ ansible_distribution }}"
+#         - "init.{{ ansible_os_family }}"
+#       paths:
+#         - ../templates/
+
+- name: improve Supervisor UI
+  copy:
+    src: "{{ item.file }}"
+    dest: "{{ item.path }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - { file: 'supervisor.css', path: '/usr/lib/python2.7/site-packages/supervisor-3.3.4-py2.7.egg/supervisor/ui/stylesheets/'}
+    - { file: 'status.html', path: '/usr/lib/python2.7/site-packages/supervisor-3.3.4-py2.7.egg/supervisor/ui/'}
+
+# - name: improve Supervisor service
+#   template:
+#     src: "service.supervisor.j2"
+#     dest: /etc/init.d/supervisor
+#     owner: root
+#     group: root
+#     mode: 0755
+#   notify:
+#     - stop all supervisorctl
+#     - reread supervisord
+#     - update supervisord
+#     - restart supervisord
+#   changed_when: true
+
+- name: add supervisor systemd service
+  template:
+    src: supervisord.service
+    dest: /usr/lib/systemd/system/supervisord.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: reload systemd daemon
+  shell: systemctl daemon-reload
+
+- name: restart supervisord
+  service:
+    name: supervisord
+    state: restarted
+
+- name: ensure supervisord is enabled and started
+  service:
+    name: supervisord
+    state: started
+    enabled: yes

@@ -13,7 +13,7 @@
         - [```Configuration```](#configuration)
     - [```nginx 1.14.0```](#nginx-1140)
     - [```kafka 1.1.0```](#kafka-110)
-    - [```Percona 5.7```](#percona-57)
+    - [```Percona MySQL 5.7.22```](#percona-mysql-5722)
     - [```gcc 5.3.1```](#gcc-531)
     - [```composer 1.6.5```](#composer-165)
 - [```Vagrant Base Box```](#vagrant-base-box)
@@ -38,8 +38,7 @@ It has been grown from Ubuntu environment with all enhancements continuously app
 
 ## ```Box```
 1. all services are disabled by default in the box
-2. 
-3. ~~Box can be got from vagrant cloud as "rarek/centos7"~~
+2. ~~Box can be got from vagrant cloud as "rarek/centos7"~~
 
 # ```Installed Software```
 ## ```PHP 7.2.6 (remi-php72 repo)```
@@ -79,7 +78,7 @@ FPM is configured to listen ports instead of sockets
 ## ```kafka 1.1.0```
     kafka and zookeeper are installed as systemd services
 
-## ```Percona 5.7```
+## ```Percona MySQL 5.7.22```
     root / 12345678
 
 ## ```gcc 5.3.1```

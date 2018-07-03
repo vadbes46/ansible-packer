@@ -12,6 +12,4 @@
 /packer/output-virtualbox-iso/
 /tools/tracer/bin
 
-
-/provision/roles/mysql/
 /provision/roles/app/

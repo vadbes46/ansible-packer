@@ -11,12 +11,13 @@
     - nginx
     - php
     - kafka
-    # - mysql
+    - mysql
     - composer
     # - vertica
     # - app
     # - plus
     - post-task
+
 ###
 ### from ubuntu
 ###
@@ -54,7 +55,7 @@
     - nginx
     - php
     - kafka
-    # - mysql
+    - mysql
     - composer
     # - vertica
     # - app

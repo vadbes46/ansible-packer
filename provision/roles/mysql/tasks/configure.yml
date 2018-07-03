@@ -1,0 +1,134 @@
+---
+- name: getting tmp percona pass
+  shell: "cat /var/log/mysqld.log | grep \'A temporary password is generated for\' | tail -1 | sed -n \'s/.*root@localhost: //p\'"
+  register: tmp_password
+  when: ansible_local is undefined or ansible_local.installed is undefined or ansible_local.installed.state is undefined or ansible_local.installed.state.mysql_root is undefined
+
+- debug:
+    msg: "temporary grepped password: {{ tmp_password.stdout }}"
+  when: ansible_local is undefined or ansible_local.installed is undefined or ansible_local.installed.state is undefined or ansible_local.installed.state.mysql_root is undefined
+
+- name: update percona MySQL server root password
+  shell: "mysql -u root -p'{{ tmp_password.stdout }}' --connect-expired-password -e \"{{ item }}\""
+  ignore_errors: yes
+  with_items:
+    - "SET GLOBAL validate_password_length = 6;"
+    - "SET GLOBAL validate_password_mixed_case_count = 0;"
+    - "SET GLOBAL validate_password_number_count = 0;"
+    - "SET GLOBAL validate_password_policy=LOW;"
+    - "SET GLOBAL validate_password_special_char_count = 0;"
+    - "ALTER USER root@localhost identified by '{{ mysql.root_pass }}';"
+  when: ansible_local is undefined or ansible_local.installed is undefined or ansible_local.installed.state is undefined or ansible_local.installed.state.mysql_root is undefined
+
+- name: set mysql_root installed fact
+  lineinfile:
+    dest: /etc/ansible/facts.d/installed.fact
+    line: "mysql_root = 1"
+
+- name: remove test database
+  mysql_db:
+    name: test
+    state: absent
+    login_host: localhost
+    login_user: root
+    login_password: "{{ mysql.root_pass }}"
+
+- name: create .my.cnf
+  template:
+    src: ".my.cnf.j2"
+    dest: "/root/.my.cnf"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: mysql options
+  lineinfile:
+    dest: "/etc/percona-server.conf.d/mysqld.cnf"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: 'skip-external-locking', line: 'skip-external-locking' }
+    - { regexp: 'bind-address =', line: 'bind-address = 0.0.0.0' }
+    - { regexp: 'max_connections =', line: 'max_connections = 4000' }
+    - { regexp: 'max_user_connections =', line: 'max_user_connections = 4000' }
+    - { regexp: 'max_allowed_packet =', line: 'max_allowed_packet = 1024M' }
+  notify:
+    - restart mysql
+
+- name: fix systemd script
+  lineinfile:
+    dest: /etc/systemd/system/mysql.service
+    line: 'LimitNOFILE = 8192'
+  notify:
+    - restart mysql
+
+- name: reload systemd daemon
+  shell: systemctl daemon-reload
+
+- name: update mysql.cnf
+  template:
+    src: "mysql.cnf.j2"
+    dest: "/etc/my.cnf.d/mysql.cnf"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart mysql
+
+- name: rem previous mysql users
+  mysql_user:
+    name: "{{ item }}"
+    host_all: yes
+    state: absent
+  with_items:
+    - "{{ mysql.dbuser_name }}"
+    - "{{ mysql.writer_name }}"
+  notify:
+    - restart mysql
+
+- name: reduce policy
+  shell: "mysql -u root -p'{{ mysql.root_pass }}' -e \"{{ item }}\""
+  ignore_errors: yes
+  with_items:
+    - "SET GLOBAL validate_password_length = 6;"
+    - "SET GLOBAL validate_password_mixed_case_count = 0;"
+    - "SET GLOBAL validate_password_number_count = 0;"
+    - "SET GLOBAL validate_password_policy=LOW;"
+    - "SET GLOBAL validate_password_special_char_count = 0;"
+    - "FLUSH PRIVILEGES;"
+
+- name: set mysql user {{ mysql.dbuser_name }}
+  mysql_user:
+    name: "{{ mysql.dbuser_name }}"
+    password: "{{ mysql.dbuser_pass }}"
+    host: "{{ item }}"
+    priv: "*.*:ALL,GRANT"
+    state: present
+  with_items:
+    - "{{ ansible_all_ipv4_addresses }}"
+    - [ "{{ mysql.host }}", "{{ env.host_prefix }}{{ host.db }}{{ env.host_postfix }}{{ env.host_postfix }}", "::1", "localhost", "%" ]
+  notify:
+    - restart mysql
+
+- name: set mysql user {{ mysql.writer_name }}
+  mysql_user:
+    name: "{{ mysql.writer_name }}"
+    password: "{{ mysql.writer_pass }}"
+    host: "{{ item }}"
+    priv: "*.*:ALL,GRANT"
+    state: present
+  with_items:
+    - "{{ ansible_all_ipv4_addresses }}"
+    - [ "{{ mysql.host }}", "{{ env.host_prefix }}{{ host.db }}{{ env.host_postfix }}{{ env.host_postfix }}", "::1", "localhost" ]
+  notify:
+    - restart mysql
+
+- name: allow root access from any host
+  mysql_user:
+    name: root
+    password: "{{ mysql.root_pass }}"
+    host: "%"
+    priv: "*.*:ALL,GRANT"
+    state: present
+  notify:
+    - restart mysql

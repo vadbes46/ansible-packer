@@ -1,0 +1,23 @@
+---
+- name: add percona repository
+  yum:
+    name: http://www.percona.com/downloads/percona-release/redhat/0.1-4/percona-release-0.1-4.noarch.rpm
+    state: present
+
+- name: install percona MySQL server
+  yum:
+    name: "{{ item }}"
+    enablerepo: percona-release-x86_64
+    state: present
+  with_items:
+    - Percona-Server-server-57
+    - Percona-Server-client-57
+    - percona-toolkit
+    - percona-xtrabackup
+    - MySQL-python
+
+- name: enable/start percona mysql service
+  service:
+    name: mysql
+    enabled: yes
+    state: started

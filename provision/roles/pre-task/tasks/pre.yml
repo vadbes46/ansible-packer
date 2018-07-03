@@ -67,6 +67,7 @@
     # - apt-transport-https
     # - nfs-common
     - centos-release-scl
+    - nmap-ncat
 
 - name: install gcc 5.3.1
   yum:

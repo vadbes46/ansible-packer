@@ -65,6 +65,14 @@ nginx_fpm:
   user_group: "www-data"
   id_gid: "5001"
 
+redis:
+  user_group: "redis"
+  id_gid: "5002"
+
+memcached:
+  user_group: "memcached"
+  id_gid: "5003"
+
 github:                                           # add your token here
   oauth_token: 688e6011a881bad2e752cdd13489c3a95810c14a
 

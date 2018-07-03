@@ -13,6 +13,7 @@
     - kafka
     - mysql
     - composer
+    - memcached
     - redis
     # - vertica
     # - app
@@ -58,6 +59,7 @@
     - kafka
     - mysql
     - composer
+    - memcached
     - redis
     # - vertica
     # - app

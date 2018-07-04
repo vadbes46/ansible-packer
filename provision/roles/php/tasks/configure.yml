@@ -16,7 +16,7 @@
     # - { path: '/etc/php.ini',            reg: '^;?opcache.revalidate_freq', value: 'opcache.revalidate_freq=0' }
     # - { path: '/etc/php.ini',            reg: '^;?session.cookie_httponly', value: 'session.cookie_httponly = 1' }
     # - { path: '/etc/php.ini',            reg: '^;?session.use_strict_mode', value: 'session.use_strict_mode = 1' }
-    - { path: '/etc/php.ini',            reg: '^;?disable_functions',       value: 'disable_functions = shell_exec,system,popen' }
+    - { path: '/etc/php.ini',            reg: '^;?disable_functions',       value: 'disable_functions = system,popen' }
     - { path: '/etc/php.ini',            reg: '^;?track_errors',            value: 'track_errors = Off' }
     - { path: '/etc/php-fpm.conf',       reg: '^;?log_level',               value: 'log_level = error' }
   notify:

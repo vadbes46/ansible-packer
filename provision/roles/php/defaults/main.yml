@@ -22,7 +22,7 @@ php_extension_conf_paths:
   - /etc/php.d
   - /etc/php-fpm.d
   - /etc/php-zts.d
-ext_workspace: "/home/{{ env.username }}"
+ext_workspace: "/home/{{ env_const.username }}"
 ext_module_path: "/usr/lib64/php/modules"
 
 ext_blitz_version: "0.10.4-PHP7"

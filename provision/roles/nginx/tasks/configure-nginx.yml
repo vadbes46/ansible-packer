@@ -39,6 +39,9 @@
 #     win-utf
 #     modules -> ../../usr/lib64/nginx/modules
 
+###########
+### ansible
+###########
 - name: put cert files
   copy:
     src: "cert/{{ item }}"
@@ -69,6 +72,21 @@
 #   notify: reload nginx
 #   # when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
 
+# - name: configure virtual hosts
+#   template:
+#     src: "nginx.{{ item }}.conf.j2"
+#     dest: "/etc/nginx/sites-available/nginx.{{ item }}.conf"
+#   with_items:
+#    - gate
+#    - worker
+#    - admin
+#    - nadmin
+#    - plus
+#    - mock
+#    - xhprof
+#    - tracer
+#    - default
+#   notify: reload nginx
 
 # - name: configure virtual hosts for local mock
 #   template:

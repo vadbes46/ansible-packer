@@ -135,3 +135,4 @@ After a box has been compiled it can be added with the following command
 12. 
 13. доделать nginx
 14. доделать supervisor (будет ли быстро перезапускать по KILL)
+15. pre_task доделать

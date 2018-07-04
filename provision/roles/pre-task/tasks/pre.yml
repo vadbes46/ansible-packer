@@ -6,23 +6,12 @@
     directory_mode: 0755
     force: no
 
-- name: display all variables/facts known for a host
-  debug:
-    var: "{{ hostvars[inventory_hostname] }}"
-    verbosity: 3
-
 # - name: Add EPEL repository
 #   yum_repository:
 #     name: epel-repo
 #     description: EPEL YUM repo
 #     gpgkey: https://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
 #     baseurl: https://download.fedoraproject.org/pub/epel/7/x86_64/
-
-# - name: update apt cache (yum check-update/yum update)
-#   yum:
-#     name: "*"
-#     state: latest
-#     update_cache: yes
 
 - name: ensure system packages are installed
   yum:
@@ -92,8 +81,6 @@
 
 - name: upgrade pip
   shell: "pip install --upgrade pip"
-  become: yes
-  become_user: "{{ deployer_username }}"
 
 # - name: add nodejs official apt repository and key
 #   shell: "wget -qO- https://deb.nodesource.com/setup_8.x | bash - warn=no"
@@ -191,9 +178,9 @@
     create_home: no
     system: yes
 
-- name: add "{{ env.username }}" to "{{ nginx_fpm.user_group }}"
+- name: add "{{ env_const.username }}" to "{{ nginx_fpm.user_group }}"
   user:
-    name: "{{ env.username }}"
+    name: "{{ env_const.username }}"
     append: yes
     groups: "{{ nginx_fpm.user_group }}"
 
@@ -219,3 +206,22 @@
   lineinfile:
     path: "/etc/profile"
     line: "export PATH=\"/usr/local/bin:$PATH\""
+
+###########
+### ansible
+###########
+- name: update apt cache (yum check-update/yum update)
+  yum:
+    name: "*"
+    state: latest
+    update_cache: yes
+
+- name: display all variables/facts known for a host
+  debug:
+    var: "{{ hostvars[inventory_hostname] }}"
+    verbosity: 3
+
+# - name: install setlock
+#   apt:
+#    name: "daemontools"
+#    state: present

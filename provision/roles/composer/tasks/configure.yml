@@ -9,14 +9,14 @@
     - "preferred-install dist"
     - "github-oauth.github.com {{ github.oauth_token }}"
   become: yes
-  become_user: "{{ env.username }}"
+  become_user: "{{ env_const.username }}"
 
 - name: install configured globally-required packages
   shell: >
     COMPOSER_HOME={{ composer_home_path }}
     composer global require {{ item.name }}:{{ item.release | default('@stable') }} --no-progress
   become: yes
-  become_user: "{{ env.username }}"
+  become_user: "{{ env_const.username }}"
   with_items: "{{ composer_global_packages }}"
   when: composer_global_packages|length > 0
 

@@ -3,8 +3,8 @@
   file:
     path: /opt/kafka/kafka-cluster
     state: "{{ item }}"
-    owner: "{{ env.username }}"
-    group: "{{ env.username }}"
+    owner: "{{ env_const.username }}"
+    group: "{{ env_const.username }}"
   with_items:
     - absent
     - directory
@@ -13,15 +13,15 @@
   copy:
     src: ../files/kafka/
     dest: /opt/kafka/kafka-cluster/
-    owner: "{{ env.username }}"
-    group: "{{ env.username }}"
+    owner: "{{ env_const.username }}"
+    group: "{{ env_const.username }}"
 
 - name: install helpers
   template:
     src: "kafka.{{ item }}.sh.j2"
     dest: "/opt/kafka/kafka-cluster/{{ item }}.sh"
-    owner: "{{ env.username }}"
-    group: "{{ env.username }}"
+    owner: "{{ env_const.username }}"
+    group: "{{ env_const.username }}"
     mode: 0755
   with_items:
    - install_topics

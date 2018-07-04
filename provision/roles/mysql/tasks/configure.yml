@@ -75,6 +75,9 @@
   notify:
     - restart mysql
 
+###########
+### ansible
+###########
 - name: rem previous mysql users
   mysql_user:
     name: "{{ item }}"

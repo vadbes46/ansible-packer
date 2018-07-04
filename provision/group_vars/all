@@ -1,6 +1,2 @@
-# platform: dev
-# platform_id: 250
-# 
-# daemon_username: nginx
-# 
-# vagrant_postfix: ""
+---
+vagrant_postfix: ""

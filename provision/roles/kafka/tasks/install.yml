@@ -13,8 +13,8 @@
   file:
     path: /opt/kafka
     state: "{{ item }}"
-    owner: "{{ env.username }}"
-    group: "{{ env.username }}"
+    owner: "{{ env_const.username }}"
+    group: "{{ env_const.username }}"
   with_items:
     - directory
   when: kafkadir.stat.isdir is not defined or not kafkadir.stat.isdir
@@ -31,8 +31,8 @@
     src: "/opt/kafka/kafka_{{ scala_version }}-{{ kafka_version }}.tgz"
     dest: /opt/kafka
     copy: no
-    owner: "{{ env.username }}"
-    group: "{{ env.username }}"
+    owner: "{{ env_const.username }}"
+    group: "{{ env_const.username }}"
   when: kafkadir.stat.isdir is not defined or not kafkadir.stat.isdir
 
 - name: cleanup

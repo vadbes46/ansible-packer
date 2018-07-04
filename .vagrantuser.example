@@ -2,8 +2,6 @@
 # ADJUST THESE SETTINGS
 # ------------------------------------------------------------------------------------------------------------------------------------
 env:
-  username: vagrant                               # who is provisioning - vagrant, vbesedin, jenkins, etc.
-  password: vagrant
   ip: "192.168.15.15"                             # private network ip
   memory: 4096                                    # 6144 or 8096 for async plus
   cpus: 4                                         # Use `2` for i5 and `4` for i7
@@ -12,6 +10,12 @@ env:
   host_postfix: ".test"                           # "-cex.ecpdss.net", "-gate2025.ecpdss.net", "-demogate.ecpdss.net" or ".test"
   timezone: Europe/Moscow                         # Etc/UTC or Europe/Moscow
   vault_pass: ""                                  # obtain from IT to run private rules, skip rules if empty
+
+env_const:
+  username: vagrant                               # who is provisioning - vagrant, vbesedin, jenkins, etc.
+  password: vagrant
+  platform: dev                                   # influence on private software behaviour
+  platform_id: 250
 
 plus:
   plus_logger_type: stream                        # plus logger type; stream - writing to file, graylog - sending to server 
@@ -28,6 +32,7 @@ path:                                             # relative local paths to repo
     - path:       "../logs"                       # sync guest logs to the host
       mount:                  ["dmode=777", "fmode=777"]
       group:                  "www-data"
+    - path:       "../pmx"                        # https://stash.ecommpay.com/projects/PR2/repos/pmx/browse
     - path:       "../plus"                       # https://stash.ecommpay.com/projects/PHP/repos/plus/browse
 
 # mount_options will have precedence over the owner and group options.
@@ -47,19 +52,18 @@ id_rsa:                                           # these keys must be authorize
 
 host:                                             # virtual hosts inside VM
   gate: "gate"
-  # worker: "worker"
+  worker: "worker"
   db: "db"
-  # host_admin: "admin"
-  # host_nadmin: "nadmin"
-  # host_kafka01: "kafka01"
-  # host_terminal: "terminal"
+  admin: "admin"
+  nadmin: "nadmin"
+  kafka01: "kafka01"
+  terminal: "terminal"
   plus: "plus"
-  mock: "mock01.ecpdss.net"
-  # host_xhprof: "xhprof"
-  # host_tracer: "tracer"
-  keydaemon: "gate.test:12080"
-  # keydaemon_url: "{{ host_prefix }}{{ host_gate }}{{ host_postfix }}{{ vagrant_postfix }}:12080" # ckeymanager01.dev.ams:12080
-  memcached: "gate.test"
+  mock: "mock"
+  xhprof: "xhprof"
+  tracer: "tracer"
+  keydaemon: "{{ env.host_prefix }}gate{{ env.host_postfix }}{{ vagrant_postfix }}:12080" # ckeymanager01.dev.ams:12080
+  # memcached: "gate.test"
 
 github:                                           # add your token here
   oauth_token: 688e6011a881bad2e752cdd13489c3a95810c14a
@@ -87,3 +91,11 @@ memcached:
 rabbitmq:
   user_group: "rabbitmq"
   id_gid: "5004"
+
+# ------------------------------------------------------------------------------------------------------------------------------------
+# DWH
+# ------------------------------------------------------------------------------------------------------------------------------------
+use_dwh: false
+host_bi: "bi.dev"
+host_bi_api: "bi-api.dev"
+dwh_host_ip: "192.168.15.16"

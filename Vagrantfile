@@ -20,7 +20,7 @@ vagrantUserDir = File.expand_path(File.dirname(__FILE__))
 if File.exist? vagrantUserDir + "/.vagrantuser" then
   vagrantuserDate = File.mtime(vagrantUserDir + "/.vagrantuser")
   vagrantuserExampleDate = File.mtime(vagrantUserDir + "/.vagrantuser.example")
-  if (vagrantuserDate.to_f < vagrantuserExampleDate.to_f)
+  if (vagrantuserDate.to_i < vagrantuserExampleDate.to_i)
     puts "\t" + "\e[41m.vagrantuser\e[0m" + " file is " + "\e[41mOUTDATED\e[0m" + "\n\t" + "---> please recreate <---"
     exit 0
   end
@@ -66,12 +66,12 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "centos" do |node|
-    node.vm.hostname = "ansible-packer"
+    node.vm.hostname = "dev"
     node.vm.network "private_network", nic_type: "virtio", ip: "#{config.user.env.ip}"
 
     # register shared folders
     node.vm.synced_folder "./", "/vagrant", disabled: true # disable default mapping
-    node.vm.synced_folder "./", "#{config.user.path.root_dir}/ansible-packer", create: true
+    node.vm.synced_folder "./", "#{config.user.path.root_dir}/ansible", create: true
     # node.vm.synced_folder ".", "/home/bitrix/www", owner: "bitrix", group: "bitrix", type: "smb", mount_options: ["mfsymlinks,dir_mode=0755,file_mode=0755"]
     if config.user.path.include? "sync_folder"
       config.user.path["sync_folder"].each do |sync_folder|
@@ -107,7 +107,7 @@ Vagrant.configure("2") do |config|
           hostExists = system "ret=$(ping -c 1 -W 1 -q \"#{config.user.env.ip}\")"
           if (hostExists)
           #   puts "\t host exists"
-            wwwDataUser = system "ssh \"#{config.user.env.username}\"@\"#{config.user.env.ip}\" -i ~/.vagrant.d/insecure_private_key -t 'bash -ic \"id \"#{config.user.nginx_fpm.user_group}\";\" &>/dev/null' 2>/dev/null"
+            wwwDataUser = system "ssh \"#{config.user.env_const.username}\"@\"#{config.user.env.ip}\" -i ~/.vagrant.d/insecure_private_key -t 'bash -ic \"id \"#{config.user.nginx_fpm.user_group}\";\" &>/dev/null' 2>/dev/null"
             if (wwwDataUser)
           #     puts "`www-data` exists"
             else
@@ -173,10 +173,22 @@ Vagrant.configure("2") do |config|
     end
 
     node.hostmanager.aliases = [
-      "#{config.user.host.plus}",
-      "#{config.user.host.gate}",
-      "#{config.user.host.mock}",
-      ]
+      "#{config.user.env.host_prefix}#{config.user.host.gate}#{config.user.env.host_postfix}",
+      "#{config.user.env.host_prefix}#{config.user.host.worker}#{config.user.env.host_postfix}",
+      "#{config.user.env.host_prefix}#{config.user.host.db}#{config.user.env.host_postfix}",
+      "#{config.user.env.host_prefix}#{config.user.host.admin}#{config.user.env.host_postfix}",
+      "#{config.user.env.host_prefix}#{config.user.host.nadmin}#{config.user.env.host_postfix}",
+      "#{config.user.env.host_prefix}#{config.user.host.kafka01}#{config.user.env.host_postfix}",
+      "#{config.user.env.host_prefix}api.#{config.user.host.terminal}#{config.user.env.host_postfix}",
+      "#{config.user.env.host_prefix}dash.#{config.user.host.terminal}#{config.user.env.host_postfix}",
+      "#{config.user.env.host_prefix}pp.#{config.user.host.terminal}#{config.user.env.host_postfix}",
+      "#{config.user.env.host_prefix}admin.#{config.user.host.terminal}#{config.user.env.host_postfix}",
+      "#{config.user.env.host_prefix}sdk.#{config.user.host.terminal}#{config.user.env.host_postfix}",
+      "#{config.user.env.host_prefix}#{config.user.host.plus}#{config.user.env.host_postfix}",
+      "#{config.user.env.host_prefix}#{config.user.host.mock}#{config.user.env.host_postfix}",
+      "#{config.user.env.host_prefix}#{config.user.host.xhprof}#{config.user.env.host_postfix}",
+      "#{config.user.env.host_prefix}#{config.user.host.tracer}#{config.user.env.host_postfix}",
+    ]
 
     node.vm.provision "file", source: config.user.id_rsa.deployer_id_rsa, destination: "/home/vagrant/.ssh/id_rsa"
     node.vm.provision "file", source: config.user.id_rsa.deployer_id_rsa_pub, destination: "/home/vagrant/.ssh/id_rsa.pub"
@@ -192,12 +204,14 @@ Vagrant.configure("2") do |config|
       chmod 600 /home/vagrant/.ssh/id_rsa
       chmod 644 /home/vagrant/.ssh/id_rsa.pub
       cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
-      ssh-keyscan -H -p 7999 -t rsa stash.ecommpay.com > /home/vagrant/.ssh/known_hosts 2>/dev/null
-      sed -i "s/^\\[.*ssh-rsa/\\[stash.ecommpay.com\\]:7999,\\[206.54.161.160\\]:7999,\\[206.54.161.161\\]:7999 ssh-rsa/g" /home/vagrant/.ssh/known_hosts
+      ssh-keyscan -H -p 7999 -t rsa stash.paymantix.com > /home/vagrant/.ssh/known_hosts 2>/dev/null
+      sed -i "s/^\\[.*ssh-rsa/\\[stash.paymantix.com\\]:7999,\\[206.54.161.160\\]:7999,\\[206.54.161.161\\]:7999 ssh-rsa/g" /home/vagrant/.ssh/known_hosts
+      # ssh-keyscan -H -p 7999 -t rsa stash.ecommpay.com > /home/vagrant/.ssh/known_hosts 2>/dev/null
+      # sed -i "s/^\\[.*ssh-rsa/\\[stash.ecommpay.com\\]:7999,\\[206.54.161.160\\]:7999,\\[206.54.161.161\\]:7999 ssh-rsa/g" /home/vagrant/.ssh/known_hosts
       ssh-keyscan -H -t rsa github.com >> /home/vagrant/.ssh/known_hosts 2>/dev/null
       chown -R vagrant:vagrant /home/vagrant/.ssh
       if [ ! -e /vagrant ]; then
-        ln -s #{config.user.path.root_dir}/ansible-packer /vagrant;
+        ln -s #{config.user.path.root_dir}/ansible /vagrant;
       fi
       sed -i "s/.*host_key_checking.*/host_key_checking = False/g" /etc/ansible/ansible.cfg
       sed -i "s/.*command_warnings.*/command_warnings = False/g" /etc/ansible/ansible.cfg
@@ -218,8 +232,8 @@ Vagrant.configure("2") do |config|
 
     provisioner = :ansible_local
     node.vm.provision provisioner do |ansible|
-      ansible.inventory_path = "#{config.user.path.root_dir}/ansible-packer/provision/hosts"
-      ansible.playbook = "#{config.user.path.root_dir}/ansible-packer/provision/site.yml"
+      ansible.inventory_path = "#{config.user.path.root_dir}/ansible/provision/hosts"
+      ansible.playbook = "#{config.user.path.root_dir}/ansible/provision/site.yml"
       ansible.limit = limit
       ansible.compatibility_mode = "2.0"
       ansible.tags = tags

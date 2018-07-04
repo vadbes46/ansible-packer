@@ -1,6 +1,6 @@
 ---
 - name: install ansible custom fact file
-  copy:
+  template:
     src: installed.fact
     dest: /etc/ansible/facts.d/
     directory_mode: 0755
@@ -195,7 +195,7 @@
     state: disabled
 
 - name: add /usr/local/lib for ldconfig
-  copy:
+  template:
     src: usr-local-lib.conf
     dest: /etc/ld.so.conf.d/
     directory_mode: 0755

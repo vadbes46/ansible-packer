@@ -1,3 +1,6 @@
 ---
 - include_tasks: pre.yml
 - include_tasks: timezone.yml
+- include_tasks: hosts.yml
+- include_tasks: logs.yml
+- include_tasks: aliases.yml

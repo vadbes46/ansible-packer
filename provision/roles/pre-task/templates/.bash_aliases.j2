@@ -1,0 +1,48 @@
+alias dbsync='php {{ path.root_dir }}/ansible/tools/dbsync/import.php'
+alias ppsync='php {{ path.root_dir }}/ansible/tools/dbsync/import.php -c terminal'
+alias dbreset='_dbreset'
+alias dbtrunc='php {{ path.root_dir }}/ansible/tools/dbtrunc/dbtrunc.php'
+alias workers_restart='bash {{ path.root_dir }}/ansible/tools/workers_restart/workers_restart.sh'
+alias dbbin='tar xzf {{ path.root_dir }}/ansible/provision/roles/pre-app/files/bin_import.tar.gz -C /data/pmx/data && php /data/pmx/cli/cron.php importBinBase'
+alias tl='_tl'
+alias logtail='{{ path.root_dir }}/ansible/tools/misc/pmx_logtail.sh t'
+alias logcat='{{ path.root_dir }}/ansible/tools/misc/pmx_logtail.sh c'
+alias greplog='{{ path.root_dir }}/ansible/tools/misc/pmx_greplog.sh'
+alias sgreplog='{{ path.root_dir }}/ansible/tools/misc/pmx_supergreplog.sh'
+alias clearcache='echo "flush_all"|nc 127.0.0.1 11211'
+alias mwc='_mwc'
+alias ll='ls -alFh'
+
+function _dbreset() {
+    cur_dir=$(pwd)
+    cd /data
+    php {{ path.root_dir }}/ansible/tools/dbreset/dbreset.php {{ path.root_dir }}/pmx $1
+    echo -e "\e[93;44mDBs were created from fixtures\e[m"
+    cd $cur_dir
+}
+
+function _mwc() {
+    find {{ path.root_dir }}/dashboard/api/runtime/              -not -name '.gitignore' -delete 2>/dev/null
+    find {{ path.root_dir }}/dashboard/api/web/assets/           -not -name '.gitignore' -delete 2>/dev/null
+    find {{ path.root_dir }}/dashboard/backend/runtime/          -not -name '.gitignore' -delete 2>/dev/null
+    find {{ path.root_dir }}/dashboard/backend/web/assets/       -not -name '.gitignore' -delete 2>/dev/null
+    find {{ path.root_dir }}/dashboard/common/runtime/           -not -name '.gitignore' -delete 2>/dev/null
+    find {{ path.root_dir }}/dashboard/console/runtime/          -not -name '.gitignore' -delete 2>/dev/null
+
+    find {{ path.root_dir }}/middleware/src/api/runtime/         -not -name '.gitignore' -delete 2>/dev/null
+    find {{ path.root_dir }}/middleware/src/api/web/assets/      -not -name '.gitignore' -delete 2>/dev/null
+    find {{ path.root_dir }}/middleware/src/backend/runtime/     -not -name '.gitignore' -delete 2>/dev/null
+    find {{ path.root_dir }}/middleware/src/backend/web/assets/  -not -name '.gitignore' -delete 2>/dev/null
+    find {{ path.root_dir }}/middleware/src/common/runtime       -not -name '.gitignore' -delete 2>/dev/null
+    find {{ path.root_dir }}/middleware/src/console/runtime/     -not -name '.gitignore' -delete 2>/dev/null
+    find {{ path.root_dir }}/middleware/src/frontend/runtime/    -not -name '.gitignore' -delete 2>/dev/null
+    find {{ path.root_dir }}/middleware/src/frontend/web/assets/ -not -name '.gitignore' -delete 2>/dev/null
+    find {{ path.root_dir }}/middleware/src/sdk/runtime/         -not -name '.gitignore' -delete 2>/dev/null
+    find {{ path.root_dir }}/middleware/src/sdk/web/assets/      -not -name '.gitignore' -delete 2>/dev/null
+    echo -e "\e[93;44mTerminal cache cleared\e[m"
+}
+
+function _tl() {
+    sudo truncate -s 0 {{ path.root_dir }}/logs/*.log
+    echo -e "\e[93;44mLogs were TRUNCATED\e[m"
+}

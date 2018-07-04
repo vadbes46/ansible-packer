@@ -1,0 +1,23 @@
+---
+- name: configure .bashrc
+  template:
+    src: .bashrc
+    dest: "/home/{{ env_const.username }}/.bashrc"
+    owner: "{{ env_const.username }}"
+    group: "{{ env_const.username }}"
+    mode: 0644
+
+- name: configure .bash_aliases
+  template:
+    src: .bash_aliases.j2
+    dest: "/home/{{ env_const.username }}/.bash_aliases"
+    owner: "{{ env_const.username }}"
+    group: "{{ env_const.username }}"
+    mode: 0644
+
+# - name: improve `ll` alias
+#   lineinfile:
+#     dest: "/home/{{ env_const.username }}/.bash_aliases"
+#     regexp: "^alias ll=.*"
+#     line: "alias ll='ls -alFh'"
+#     state: present

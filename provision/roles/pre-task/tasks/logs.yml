@@ -1,0 +1,26 @@
+---
+- name: "chown && rm logs"
+  file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    owner: "{{ item.user }}"
+    group: "{{ item.group }}"
+    mode: 0777
+  with_items:
+    - { path: '{{ path.root_dir }}/logs', state: 'absent', user: '{{ env_const.username }}', group: '{{ nginx_fpm.user_group }}' }
+    - { path: '{{ path.root_dir }}/logs', state: 'directory', user: '{{ env_const.username }}', group: '{{ nginx_fpm.user_group }}' }
+  ignore_errors: true
+  when: inventory_hostname == 'localhost'
+
+- shell: "rm -rf * &>/dev/null warn=no"
+  args:
+    chdir: "{{ path.root_dir }}/logs" 
+  ignore_errors: true
+  when: inventory_hostname != 'localhost'
+
+- name: chown logs
+  file:
+    path: "{{ path.root_dir }}/logs"
+    owner: "{{ env_const.username }}"
+    group: "{{ nginx_fpm.user_group }}"
+    mode: 0777

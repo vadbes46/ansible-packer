@@ -57,6 +57,7 @@
     # - nfs-common
     - centos-release-scl
     - nmap-ncat
+    - MySQL-python
 
 - name: install gcc 5.3.1
   yum:

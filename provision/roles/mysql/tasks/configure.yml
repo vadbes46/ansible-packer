@@ -41,31 +41,18 @@
     group: root
     mode: 0600
 
-- name: mysql options
-  lineinfile:
-    dest: "/etc/percona-server.conf.d/mysqld.cnf"
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
-  with_items:
-    - { regexp: 'skip-external-locking', line: 'skip-external-locking' }
-    - { regexp: 'bind-address =', line: 'bind-address = 0.0.0.0' }
-    - { regexp: 'max_connections =', line: 'max_connections = 4000' }
-    - { regexp: 'max_user_connections =', line: 'max_user_connections = 4000' }
-    - { regexp: 'max_allowed_packet =', line: 'max_allowed_packet = 1024M' }
-  notify:
-    - restart mysql
-
 - name: fix systemd script
   lineinfile:
     dest: /etc/systemd/system/mysql.service
-    line: 'LimitNOFILE = 8192'
+    regexp: "LimitNOFILE"
+    line: 'LimitNOFILE = 16384'
   notify:
     - restart mysql
 
 - name: reload systemd daemon
   shell: systemctl daemon-reload
 
-- name: update mysql.cnf
+- name: update mysql options /etc/my.cnf.d/mysql.cnf
   template:
     src: "mysql.cnf.j2"
     dest: "/etc/my.cnf.d/mysql.cnf"

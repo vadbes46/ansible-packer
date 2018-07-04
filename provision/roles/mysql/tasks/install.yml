@@ -14,7 +14,6 @@
     - Percona-Server-client-57
     - percona-toolkit
     - percona-xtrabackup
-    - MySQL-python
 
 - name: enable/start percona mysql service
   service:

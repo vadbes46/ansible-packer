@@ -205,9 +205,9 @@ Vagrant.configure("2") do |config|
       chmod 644 /home/vagrant/.ssh/id_rsa.pub
       cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
       ssh-keyscan -H -p 7999 -t rsa stash.paymantix.com > /home/vagrant/.ssh/known_hosts 2>/dev/null
-      sed -i "s/^\\[.*ssh-rsa/\\[stash.paymantix.com\\]:7999,\\[206.54.161.160\\]:7999,\\[206.54.161.161\\]:7999 ssh-rsa/g" /home/vagrant/.ssh/known_hosts
-      # ssh-keyscan -H -p 7999 -t rsa stash.ecommpay.com > /home/vagrant/.ssh/known_hosts 2>/dev/null
-      # sed -i "s/^\\[.*ssh-rsa/\\[stash.ecommpay.com\\]:7999,\\[206.54.161.160\\]:7999,\\[206.54.161.161\\]:7999 ssh-rsa/g" /home/vagrant/.ssh/known_hosts
+      sed -i "s/^\\[|.*ssh-rsa/\\[stash.paymantix.com\\]:7999,\\[206.54.161.160\\]:7999,\\[206.54.161.161\\]:7999 ssh-rsa/g" /home/vagrant/.ssh/known_hosts
+      ssh-keyscan -H -p 7999 -t rsa stash.ecommpay.com >> /home/vagrant/.ssh/known_hosts 2>/dev/null
+      sed -i "s/^\\[|.*ssh-rsa/\\[stash.ecommpay.com\\]:7999,\\[206.54.161.160\\]:7999,\\[206.54.161.161\\]:7999 ssh-rsa/g" /home/vagrant/.ssh/known_hosts
       ssh-keyscan -H -t rsa github.com >> /home/vagrant/.ssh/known_hosts 2>/dev/null
       chown -R vagrant:vagrant /home/vagrant/.ssh
       if [ ! -e /vagrant ]; then
